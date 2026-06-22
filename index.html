@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Архів документів · сертифікати та ліцензії</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===================== PIN OVERLAY ===================== -->
+<div id="pinOverlay" class="pin-overlay hidden">
+  <div class="pin-box">
+    <div class="pin-brand-mark">АД</div>
+    <h2 id="pinTitle">Введіть PIN-код</h2>
+    <p id="pinSubtitle" class="pin-subtitle">для доступу до архіву</p>
+    <div class="pin-dots" id="pinDots">
+      <span class="pd"></span><span class="pd"></span>
+      <span class="pd"></span><span class="pd"></span>
+    </div>
+    <p class="pin-error hidden" id="pinError">Неправильний PIN</p>
+    <div class="pin-keypad">
+      <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
+      <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
+      <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
+      <button class="pin-key pin-key-clear" data-k="clear">⌫</button>
+      <button class="pin-key" data-k="0">0</button>
+      <button class="pin-key pin-key-ok" data-k="ok">OK</button>
+    </div>
+    <button class="btn-text" id="pinSkipBtn" style="margin-top:14px;font-size:12px">Скасувати</button>
+  </div>
+</div>
+
+<!-- ===================== MAIN APP ===================== -->
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">АД</div>
+      <div class="brand-text">
+        <h1>Архів документів</h1>
+        <p>сертифікати · ліцензії · посвідчення</p>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input id="searchInput" type="text" placeholder="Пошук за назвою, номером або датою…" aria-label="Пошук документів">
+    </div>
+    <div class="topbar-actions">
+      <button id="lockBtn" class="icon-btn hidden" title="Заблокувати" aria-label="Заблокувати">🔒</button>
+      <button id="reportBtn" class="icon-btn" title="Друкований звіт" aria-label="Звіт">📋</button>
+      <button id="calendarBtn" class="icon-btn" title="Експорт у календар (.ics)" aria-label="Календар">📅</button>
+      <button id="settingsBtn" class="icon-btn" title="Налаштування" aria-label="Налаштування">⚙</button>
+      <button id="backupBtn" class="btn-ghost">Резервна копія</button>
+      <button id="addBtn" class="btn-primary">+ Додати документ</button>
+    </div>
+  </header>
+
+  <div id="alertBanner" class="alert-banner hidden" aria-live="polite"></div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="filter-group">
+        <div class="scope-toggle">
+          <button class="scope-btn active" id="scopeActiveBtn" data-scope="active">Активні <span class="count" id="scopeActiveCount"></span></button>
+          <button class="scope-btn" id="scopeArchiveBtn" data-scope="archive">Архів <span class="count" id="scopeArchiveCount"></span></button>
+        </div>
+      </div>
+      <div class="filter-group" id="statusFilterGroup">
+        <h2>Статус</h2>
+        <div id="statusFilters"></div>
+      </div>
+      <div class="filter-group">
+        <h2>Теги</h2>
+        <div id="tagFilters"></div>
+      </div>
+      <div class="filter-group">
+        <h2>Сортування</h2>
+        <select id="sortSelect">
+          <option value="expiry-asc">Найближчий строк спершу</option>
+          <option value="name-asc">За назвою (А–Я)</option>
+          <option value="added-desc">Спершу нещодавно додані</option>
+        </select>
+      </div>
+      <button id="resetFiltersBtn" class="btn-text">Скинути фільтри</button>
+    </aside>
+
+    <main class="content">
+      <div class="content-header">
+        <span class="results-count" id="resultsCount"></span>
+        <div class="view-toggle" role="group" aria-label="Режим перегляду">
+          <button class="view-btn active" data-view="tile"  title="Плитки"        aria-label="Плитки">⊞</button>
+          <button class="view-btn"        data-view="list"  title="Список"         aria-label="Список">☰</button>
+          <button class="view-btn"        data-view="large" title="Великі плитки"  aria-label="Великі плитки">▦</button>
+        </div>
+      </div>
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-mark">＋</div>
+        <p class="empty-state-text">Тут поки порожньо.</p>
+        <button class="btn-primary" id="emptyAddBtn">Додати перший документ</button>
+      </div>
+      <div id="cardsGrid" class="cards-grid"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ===================== ADD/EDIT MODAL ===================== -->
+<div id="editModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Новий документ</h2>
+      <button class="modal-close" data-close-modal="editModal" aria-label="Закрити">✕</button>
+    </div>
+    <form id="docForm">
+      <div class="modal-body">
+        <div class="field-row">
+          <div class="field">
+            <label for="nameUaInput">Назва українською</label>
+            <input type="text" id="nameUaInput" required placeholder="напр. Посвідчення водія">
+          </div>
+          <div class="field">
+            <label for="nameEnInput">Назва англійською <span class="opt">(необов'язково)</span></label>
+            <input type="text" id="nameEnInput" placeholder="e.g. Driving Licence">
+          </div>
+        </div>
+        <div class="field">
+          <label for="numberInput">Номер документа <span class="opt">(необов'язково)</span></label>
+          <input type="text" id="numberInput" placeholder="напр. AB 123456">
+        </div>
+        <div class="field">
+          <label for="tagsInput">Теги / категорія <span class="opt">(Enter або кома, щоб додати)</span></label>
+          <div class="tags-field" id="tagsFieldWrap">
+            <span id="tagsChips"></span>
+            <input type="text" id="tagsInput" list="tagSuggestions" placeholder="додати тег…">
+          </div>
+          <datalist id="tagSuggestions"></datalist>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="issueDateInput">Дата видачі <span class="opt">(необов'язково)</span></label>
+            <input type="date" id="issueDateInput">
+            <p class="field-error hidden" id="issueDateError">Перевірте дату видачі</p>
+          </div>
+          <div class="field">
+            <label for="expiryDateInput">Дійсний до</label>
+            <input type="date" id="expiryDateInput">
+            <p class="field-error hidden" id="expiryDateError">Дата закінчення раніше дати видачі</p>
+          </div>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="noExpiryCheckbox">
+          <label for="noExpiryCheckbox">Безстроковий документ (без строку дії)</label>
+        </div>
+        <div class="field">
+          <label for="notesInput">Нотатки <span class="opt">(необов'язково)</span></label>
+          <textarea id="notesInput" placeholder="будь-які примітки до документа"></textarea>
+        </div>
+        <div class="field">
+          <label>Файли документа <span class="opt">(PDF, JPG або PNG, до 25 МБ кожен)</span></label>
+          <div id="dropZone" class="drop-zone">
+            <label class="file-label-btn" for="fileInput">⤴ Вибрати файл(и)</label>
+            <span class="drop-zone-hint">або перетягніть сюди</span>
+            <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple>
+          </div>
+          <div id="attachList" class="attach-list"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-footer-actions">
+          <button type="button" id="archiveActionBtn" class="archive-action-btn hidden">Архівувати</button>
+          <button type="button" id="deleteDocBtn" class="delete-btn hidden">Видалити документ</button>
+        </div>
+        <div class="modal-footer-actions">
+          <button type="button" class="btn-ghost" data-close-modal="editModal">Скасувати</button>
+          <button type="submit" class="btn-primary">Зберегти</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== SETTINGS MODAL ===================== -->
+<div id="settingsModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Налаштування</h2>
+      <button class="modal-close" data-close-modal="settingsModal" aria-label="Закрити">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="warnDaysInput">Попереджати за (днів до закінчення строку)</label>
+        <input type="text" inputmode="numeric" id="warnDaysInput" placeholder="30">
+      </div>
+      <p class="modal-note">Документи, до закінчення яких залишилось менше вказаної кількості днів, позначаються жовтим.</p>
+
+      <div style="border-top:1px solid var(--hairline);margin:18px 0 16px;"></div>
+      <h3 style="margin:0 0 8px;font-size:13.5px;color:var(--ink);">🔒 Захист PIN-кодом</h3>
+      <p class="modal-note" id="pinStatusNote">PIN-код не встановлено</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" id="setPinBtn" class="btn-ghost">Встановити PIN</button>
+        <button type="button" id="removePinBtn" class="btn-ghost hidden" style="color:var(--danger);border-color:var(--danger);">Видалити PIN</button>
+      </div>
+
+      <div class="danger-zone">
+        <h3 style="margin:0 0 6px;font-size:13.5px;color:var(--ink);">Небезпечна зона</h3>
+        <p class="modal-note">Видалити всі документи та налаштування безповоротно.</p>
+        <button type="button" id="clearAllBtn" class="delete-btn">Очистити всі дані</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span></span>
+      <button type="button" id="saveSettingsBtn" class="btn-primary">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== BACKUP MODAL ===================== -->
+<div id="backupModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Резервна копія</h2>
+      <button class="modal-close" data-close-modal="backupModal" aria-label="Закрити">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-note">Усі документи зберігаються лише в браузері на цьому пристрої. Зберігайте копії на зовнішній носій.</p>
+      <div class="backup-actions">
+        <div class="backup-action">
+          <div>
+            <h3>Зберегти копію</h3>
+            <p>Відкриє вікно вибору місця (Chrome/Edge) або завантажить у «Завантаження»</p>
+          </div>
+          <button id="exportBtn" class="btn-ghost">Зберегти як…</button>
+        </div>
+        <div class="backup-action">
+          <div>
+            <h3>Відновити з файлу</h3>
+            <p>Додає документи з раніше збереженої копії</p>
+          </div>
+          <button id="importBtn" class="btn-ghost">Обрати файл</button>
+          <input type="file" id="importFileInput" accept="application/json" class="hidden">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PIN SETUP MODAL ===================== -->
+<div id="pinSetupModal" class="modal-overlay hidden">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-header">
+      <h2 id="pinSetupTitle">Встановити PIN-код</h2>
+      <button class="modal-close" data-close-modal="pinSetupModal" aria-label="Закрити">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-note">4-значний числовий PIN-код. Введіть його кожного разу при відкритті застосунку.</p>
+      <div class="field">
+        <label for="pinInput1">PIN-код</label>
+        <input type="password" inputmode="numeric" maxlength="4" id="pinInput1" placeholder="••••" style="letter-spacing:0.4em;font-size:20px;text-align:center;">
+      </div>
+      <div class="field">
+        <label for="pinInput2">Підтвердити PIN-код</label>
+        <input type="password" inputmode="numeric" maxlength="4" id="pinInput2" placeholder="••••" style="letter-spacing:0.4em;font-size:20px;text-align:center;">
+      </div>
+      <p class="field-error hidden" id="pinSetupError">PIN-коди не збігаються або занадто короткий</p>
+    </div>
+    <div class="modal-footer">
+      <span></span>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn-ghost" data-close-modal="pinSetupModal">Скасувати</button>
+        <button type="button" id="confirmPinBtn" class="btn-primary">Зберегти PIN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<script src="pdf.min.js"></script>
+<script src="pdfthumb.js"></script>
+<script src="seed-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
