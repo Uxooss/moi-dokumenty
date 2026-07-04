@@ -105,46 +105,6 @@
         </div>
         <div class="topbar-actions">
           <button
-            id="themeToggleBtn"
-            class="icon-btn"
-            title="Перемкнути тему"
-            aria-label="Перемкнути тему"
-          >
-            <svg
-              class="icon-sun"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <circle cx="12" cy="12" r="5" />
-              <path
-                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
-              />
-            </svg>
-            <svg
-              class="icon-moon"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          </button>
-          <button
-            id="langToggleBtn"
-            class="icon-btn lang-toggle-btn"
-            title="Мова інтерфейсу"
-            aria-label="Мова інтерфейсу"
-          >
-            <span class="lang-label">UA</span>
-          </button>
-          <button
             id="lockBtn"
             class="icon-btn hidden"
             title="Заблокувати"
@@ -890,6 +850,24 @@
           </button>
         </div>
         <div class="modal-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="themeSelect" data-i18n="labelTheme">Тема</label>
+              <select id="themeSelect">
+                <option value="dark" data-i18n="themeDark">Темна</option>
+                <option value="light" data-i18n="themeLight">Світла</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="langSelect" data-i18n="labelLang">Мова</label>
+              <select id="langSelect">
+                <option value="uk">Українська</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-divider"></div>
+
           <div class="field">
             <label for="warnDaysInput" data-i18n="labelWarnDays"
               >Попереджати за (днів до закінчення строку)</label

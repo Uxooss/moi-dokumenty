@@ -191,6 +191,10 @@
       phNumber: "напр. AB 123456",
       phTag: "додати тег…",
       phNotes: "будь-які примітки до документа",
+      labelTheme: "Тема",
+      labelLang: "Мова інтерфейсу",
+      themeDark: "Темна",
+      themeLight: "Світла",
     },
     en: {
       appTitle: "My Registry",
@@ -375,6 +379,10 @@
       phNumber: "e.g. AB 123456",
       phTag: "add tag…",
       phNotes: "any notes about the document",
+      labelTheme: "Theme",
+      labelLang: "Language",
+      themeDark: "Dark",
+      themeLight: "Light",
     },
   };
 
@@ -401,8 +409,6 @@
     currentLang = lang;
     localStorage.setItem("lang", lang);
     document.documentElement.setAttribute("data-lang", lang);
-    const label = langToggleBtn.querySelector(".lang-label");
-    if (label) label.textContent = lang === "uk" ? "UA" : "EN";
     applyI18n();
     renderAll();
   }
@@ -637,8 +643,8 @@
     pinInput2,
     confirmPinBtn,
     pinSetupError,
-    themeToggleBtn,
-    langToggleBtn,
+    themeSelect,
+    langSelect,
     dashboardToggleBtn,
     dashboardSection,
     dashTotal,
@@ -737,8 +743,8 @@
     pinInput2 = $("pinInput2");
     confirmPinBtn = $("confirmPinBtn");
     pinSetupError = $("pinSetupError");
-    themeToggleBtn = $("themeToggleBtn");
-    langToggleBtn = $("langToggleBtn");
+    themeSelect = $("themeSelect");
+    langSelect = $("langSelect");
     dashboardToggleBtn = $("dashboardToggleBtn");
     dashboardSection = $("dashboardSection");
     dashTotal = $("dashTotal");
@@ -2137,13 +2143,6 @@
       }),
     );
 
-    /* Theme toggle */
-    themeToggleBtn.addEventListener("click", toggleTheme);
-
-    /* Language toggle */
-    langToggleBtn.addEventListener("click", () => {
-      setLang(currentLang === "uk" ? "en" : "uk");
-    });
 
     /* Dashboard toggle */
     dashboardToggleBtn.addEventListener("click", () => {
@@ -2465,6 +2464,10 @@
         autoLockSelect.value = String(state.settings.autoLockMinutes || 0);
       if (encryptionToggle)
         encryptionToggle.checked = !!state.settings.encryptionEnabled;
+      if (themeSelect)
+        themeSelect.value = getTheme();
+      if (langSelect)
+        langSelect.value = currentLang;
       updatePINUI(!!(await getPINHash()));
       showModal(settingsModal);
     });
@@ -2491,6 +2494,19 @@
         const enc = encryptionToggle.checked;
         await dbPut("settings", { key: "encryptionEnabled", value: enc });
         state.settings.encryptionEnabled = enc;
+      }
+
+      /* Theme select */
+      if (themeSelect) {
+        setTheme(themeSelect.value);
+      }
+
+      /* Language select */
+      if (langSelect) {
+        const chosenLang = langSelect.value;
+        if (chosenLang !== currentLang) {
+          setLang(chosenLang);
+        }
       }
 
       closeModal(settingsModal);
@@ -2698,8 +2714,6 @@
       cacheDOMRefs();
       applyI18n();
       document.documentElement.setAttribute("data-lang", currentLang);
-      const label = langToggleBtn.querySelector(".lang-label");
-      if (label) label.textContent = currentLang === "uk" ? "UA" : "EN";
 
       await loadSettings();
       await initPIN();
