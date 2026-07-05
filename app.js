@@ -835,13 +835,11 @@
   function stampText(doc) {
     const s = getDocStatus(doc);
     if (s.key === "none") return t("stampInfinity");
-    if (s.key === "expired") return t("stampExpired");
+    if (s.key === "expired") return "✕";
     if (s.key === "soon") {
-      if (s.daysLeft === 0) return t("stampToday");
-      if (s.daysLeft === 1) return t("stamp1Day");
-      return `${s.daysLeft} ${t("stampDays")}`;
+      return s.daysLeft;
     }
-    return t("stampValid");
+    return "✓";
   }
 
   function getPreviewInfo(doc, large) {
@@ -1183,9 +1181,10 @@
     state.settings.encryptionEnabled = (
       rows.find((r) => r.key === "encryptionEnabled") || { value: false }
     ).value;
-    state.viewMode = (
-      rows.find((r) => r.key === "viewMode") || { value: "tile" }
-    ).value;
+    const customViewMode = rows.find((r) => r.key === "viewMode");
+    state.hasCustomViewMode = !!customViewMode;
+    let defaultView = window.innerWidth <= 768 ? "list" : "tile";
+    state.viewMode = customViewMode ? customViewMode.value : defaultView;
   }
 
   async function loadDocs() {
@@ -1360,12 +1359,25 @@
       : "";
   }
 
+  function cardTitlesHtml(doc, isRow = false) {
+    let topName, bottomName;
+    if (currentLang === "en" && doc.nameEn) {
+      topName = doc.nameEn;
+      bottomName = doc.nameUa;
+    } else {
+      topName = doc.nameUa || doc.nameEn;
+      bottomName = (topName === doc.nameUa && doc.nameEn) ? doc.nameEn : "";
+    }
+    const pClass = isRow ? "" : ` class="card-name-en"`;
+    return `<h3>${esc(topName)}</h3>${bottomName ? `<p${pClass}>${esc(bottomName)}</p>` : ""}`;
+  }
+
   function cardTile(doc) {
     const s = getDocStatus(doc),
       fc = (doc.files || []).length;
     return `<article class="doc-card status-${s.key}${doc.archived ? " is-archived" : ""}" data-id="${doc.id}" tabindex="0">
       <div class="doc-thumb">${thumbHtml(doc, false)}<div class="thumb-stamp stamp-${s.key}">${stampText(doc)}</div>${archCtlHtml(doc)}${fc > 1 ? `<span class="file-count-badge">${fc} ${pluralUk(fc, [t("file1"), t("file24"), t("file5")])}</span>` : ""}</div>
-      <div class="card-body"><div class="card-titles"><h3>${esc(doc.nameUa)}</h3>${doc.nameEn ? `<p class="card-name-en">${esc(doc.nameEn)}</p>` : ""}</div>${doc.number ? `<p class="card-number">№ ${esc(doc.number)}</p>` : ""}<div class="card-meta">${mkMeta(doc)}</div>${mkTags(doc)}</div>
+      <div class="card-body"><div class="card-titles">${cardTitlesHtml(doc)}</div>${doc.number ? `<p class="card-number">№ ${esc(doc.number)}</p>` : ""}<div class="card-meta">${mkMeta(doc)}</div>${mkTags(doc)}</div>
     </article>`;
   }
 
@@ -1374,7 +1386,7 @@
       fc = (doc.files || []).length;
     return `<article class="doc-card status-${s.key}${doc.archived ? " is-archived" : ""}" data-id="${doc.id}" tabindex="0">
       <div class="doc-thumb">${thumbHtml(doc, true)}<div class="thumb-stamp stamp-${s.key}">${stampText(doc)}</div>${archCtlHtml(doc)}${fc > 1 ? `<span class="file-count-badge">${fc} ${pluralUk(fc, [t("file1"), t("file24"), t("file5")])}</span>` : ""}</div>
-      <div class="card-body"><div class="card-titles"><h3>${esc(doc.nameUa)}</h3>${doc.nameEn ? `<p class="card-name-en">${esc(doc.nameEn)}</p>` : ""}</div>${doc.number ? `<p class="card-number">№ ${esc(doc.number)}</p>` : ""}<div class="card-meta">${mkMeta(doc)}</div>${mkTags(doc)}</div>
+      <div class="card-body"><div class="card-titles">${cardTitlesHtml(doc)}</div>${doc.number ? `<p class="card-number">№ ${esc(doc.number)}</p>` : ""}<div class="card-meta">${mkMeta(doc)}</div>${mkTags(doc)}</div>
     </article>`;
   }
 
@@ -1397,7 +1409,7 @@
         : "";
     return `<article class="doc-row status-${s.key}${doc.archived ? " is-archived" : ""}" data-id="${doc.id}" tabindex="0">
       <div class="row-thumb">${thumb}</div>
-      <div class="row-titles"><h3>${esc(doc.nameUa)}</h3>${doc.nameEn ? `<p>${esc(doc.nameEn)}</p>` : ""}</div>
+      <div class="row-titles">${cardTitlesHtml(doc, true)}</div>
       <div class="row-number">${doc.number ? "№ " + esc(doc.number) : ""}</div>
       <div class="row-tags">${(doc.tags || [])
         .slice(0, 3)
@@ -2127,6 +2139,24 @@
       renderAll();
     });
 
+    const tagsFilterHeader = $("tagsFilterHeader");
+    if (tagsFilterHeader) {
+      tagsFilterHeader.addEventListener("click", () => {
+        tagsFilterHeader.classList.toggle("open");
+        tagFiltersEl.classList.toggle("open");
+      });
+    }
+
+    let lastIsMobile = window.innerWidth <= 768;
+    window.addEventListener("resize", () => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile !== lastIsMobile) {
+        lastIsMobile = isMobile;
+        state.viewMode = isMobile ? "list" : "tile";
+        renderCards();
+      }
+    });
+
     scopeActiveBtn.addEventListener("click", () => {
       state.filters.scope = "active";
       renderAll();
@@ -2143,6 +2173,7 @@
     document.querySelectorAll(".view-btn").forEach((b) =>
       b.addEventListener("click", async () => {
         state.viewMode = b.getAttribute("data-view");
+        state.hasCustomViewMode = true;
         await dbPut("settings", { key: "viewMode", value: state.viewMode });
         renderCards();
       }),
@@ -2274,18 +2305,21 @@
       /* 1, 2, 3 → view modes */
       if (e.key === "1") {
         state.viewMode = "tile";
+        state.hasCustomViewMode = true;
         dbPut("settings", { key: "viewMode", value: "tile" });
         renderCards();
         return;
       }
       if (e.key === "2") {
         state.viewMode = "list";
+        state.hasCustomViewMode = true;
         dbPut("settings", { key: "viewMode", value: "list" });
         renderCards();
         return;
       }
       if (e.key === "3") {
         state.viewMode = "large";
+        state.hasCustomViewMode = true;
         dbPut("settings", { key: "viewMode", value: "large" });
         renderCards();
         return;
