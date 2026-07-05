@@ -8,6 +8,7 @@
   /* ===================== 1. i18n System ===================== */
   const TRANSLATIONS = {
     uk: {
+      brandMark: "МР",
       appTitle: "Мій Реєстр",
       appSubtitle: "сертифікати · ліцензії · посвідчення",
       searchPlaceholder: "Пошук за назвою, номером або датою…",
@@ -197,6 +198,7 @@
       themeLight: "Світла",
     },
     en: {
+      brandMark: "MR",
       appTitle: "My Registry",
       appSubtitle: "certificates · licenses · credentials",
       searchPlaceholder: "Search by name, number or date…",
@@ -590,9 +592,12 @@
     emptyState,
     emptyAddBtn,
     alertBanner,
+    alertListModal,
+    alertListBody,
     addBtn,
     settingsBtn,
     backupBtn,
+    topbarBackupBtn,
     reportBtn,
     calendarBtn,
     lockBtn,
@@ -690,9 +695,12 @@
     emptyState = $("emptyState");
     emptyAddBtn = $("emptyAddBtn");
     alertBanner = $("alertBanner");
+    alertListModal = $("alertListModal");
+    alertListBody = $("alertListBody");
     addBtn = $("addBtn");
     settingsBtn = $("settingsBtn");
     backupBtn = $("backupBtn");
+    topbarBackupBtn = $("topbarBackupBtn");
     reportBtn = $("reportBtn");
     calendarBtn = $("calendarBtn");
     lockBtn = $("lockBtn");
@@ -1510,23 +1518,21 @@
     urgent.sort((a, b) => getDocStatus(a).daysLeft - getDocStatus(b).daysLeft);
     const exp = urgent.filter((d) => getDocStatus(d).key === "expired").length,
       soon = urgent.length - exp;
-    let det = "";
-    if (exp)
-      det += `${exp} ${pluralUk(exp, [t("expired1"), t("expired24"), t("expired5")])}`;
-    if (exp && soon) det += " · ";
-    if (soon)
-      det += `${soon} ${pluralUk(soon, [t("expiringSoon"), t("expiringSoonP"), t("expiringSoonP")])}`;
     const chips = urgent
-      .slice(0, 5)
       .map(
         (d) =>
           `<button class="alert-chip" data-open="${d.id}">${esc(d.nameUa)} · ${stampText(d)}</button>`,
       )
       .join("");
     alertBanner.classList.remove("hidden");
-    alertBanner.innerHTML = `<div class="alert-icon">⚠</div>
-      <div class="alert-text"><strong>${urgent.length} ${pluralUk(urgent.length, [t("docNeedAttention"), t("docsNeedAttention"), t("docsNeedAttention5")])} ${t("attentionNeeded")}</strong><span>${det}</span></div>
-      <div class="alert-chips">${chips}${urgent.length > 5 ? `<span class="alert-more">+${urgent.length - 5}</span>` : ""}</div>`;
+    alertBanner.innerHTML = `
+      <div class="alert-header" id="alertBannerHeader">
+        <div class="alert-icon">⚠</div>
+        <div class="alert-text"><strong>${urgent.length} ${pluralUk(urgent.length, [t("docNeedAttention"), t("docsNeedAttention"), t("docsNeedAttention5")])} ${t("attentionNeeded")}</strong></div>
+      </div>
+      <div class="alert-marquee">
+        <div class="alert-chips">${chips}</div>
+      </div>`;
   }
 
   function renderAll() {
@@ -2054,7 +2060,22 @@
       else openEditModal(doc);
     });
 
+    function openAlertListModal() {
+      const urgent = state.docs.filter(
+        (d) => !d.archived && ["soon", "expired"].includes(getDocStatus(d).key),
+      );
+      urgent.sort((a, b) => getDocStatus(a).daysLeft - getDocStatus(b).daysLeft);
+      alertListBody.innerHTML = urgent.length
+        ? `<div class="cards-grid mode-list" style="grid-template-columns: 1fr;">${urgent.map(cardTile).join("")}</div>`
+        : `<p class="empty-msg">${t("noDocs")}</p>`;
+      showModal(alertListModal);
+    }
+
     alertBanner.addEventListener("click", (e) => {
+      if (e.target.closest("#alertBannerHeader")) {
+        openAlertListModal();
+        return;
+      }
       const c = e.target.closest("[data-open]");
       if (!c) return;
       const doc = state.docs.find(
@@ -2063,7 +2084,30 @@
       if (doc) {
         if (doc.files && doc.files.length) openPreview(doc);
         else openEditModal(doc);
+        // Also close the alert list modal if it's open, to switch cleanly to the preview/edit mode
+        closeModal(alertListModal);
       }
+    });
+
+    alertListBody.addEventListener("click", (e) => {
+      const card = e.target.closest("[data-id]");
+      if (!card) return;
+      const doc = state.docs.find(
+        (d) => String(d.id) === card.getAttribute("data-id"),
+      );
+      if (!doc) return;
+      
+      const ab = e.target.closest("[data-archive]");
+      if (ab) {
+        e.stopPropagation();
+        archiveDoc(+ab.getAttribute("data-archive"));
+        openAlertListModal(); // Refresh modal content
+        return;
+      }
+      
+      if (doc.files && doc.files.length) openPreview(doc);
+      else openEditModal(doc);
+      closeModal(alertListModal);
     });
 
     statusFiltersEl.addEventListener("click", (e) => {
@@ -2538,6 +2582,7 @@
   /* ===================== 29. Backup / Restore (improved) ===================== */
   function bindBackupEvents() {
     backupBtn.addEventListener("click", () => showModal(backupModal));
+    topbarBackupBtn.addEventListener("click", () => showModal(backupModal));
 
     exportBtn.addEventListener("click", async () => {
       try {
