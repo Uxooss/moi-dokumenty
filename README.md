@@ -1,4 +1,4 @@
-# Мій Реєстр / My Registry (Doc Vault)
+# Мої Докі / My Docs
 
 An offline-first, Progressive Web App (PWA) designed as a secure archive and management system for your essential certificates, licenses, and IDs. It allows you to digitize your important documents, track their validity periods, and securely lock access behind a PIN.
 

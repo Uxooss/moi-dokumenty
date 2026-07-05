@@ -8,8 +8,8 @@
   /* ===================== 1. i18n System ===================== */
   const TRANSLATIONS = {
     uk: {
-      brandMark: "МР",
-      appTitle: "Мій Реєстр",
+      brandMark: "МД",
+      appTitle: "Мої Докі",
       appSubtitle: "сертифікати · ліцензії · посвідчення",
       searchPlaceholder: "Пошук за назвою, номером або датою…",
       addBtn: "+ Додати документ",
@@ -104,7 +104,7 @@
       dashSoon: "Спливають",
       dashExpired: "Прострочені",
       dashNone: "Безстрокові",
-      dashTimeline: "Найближчі терміни (90 днів)",
+      dashTimeline: "Найближчі терміни (360 днів)",
       skipToContent: "Перейти до вмісту",
       statusAll: "Усі",
       statusValid: "Дійсні",
@@ -169,7 +169,7 @@
       doc1: "документ",
       doc24: "документи",
       doc5: "документів",
-      notifTitle: "Мій Реєстр — Увага!",
+      notifTitle: "Мої Докі — Увага!",
       notifBody: "Документів потребують вашої уваги",
       reportTitle: "Сертифікати та ліцензії",
       reportActive: "(Активні)",
@@ -198,8 +198,8 @@
       themeLight: "Світла",
     },
     en: {
-      brandMark: "MR",
-      appTitle: "My Registry",
+      brandMark: "MD",
+      appTitle: "My Docs",
       appSubtitle: "certificates · licenses · credentials",
       searchPlaceholder: "Search by name, number or date…",
       addBtn: "+ Add Document",
@@ -293,7 +293,7 @@
       dashSoon: "Expiring",
       dashExpired: "Expired",
       dashNone: "Permanent",
-      dashTimeline: "Upcoming deadlines (90 days)",
+      dashTimeline: "Upcoming deadlines (360 days)",
       skipToContent: "Skip to content",
       statusAll: "All",
       statusValid: "Valid",
@@ -358,7 +358,7 @@
       doc1: "document",
       doc24: "documents",
       doc5: "documents",
-      notifTitle: "My Registry — Attention!",
+      notifTitle: "My Docs — Attention!",
       notifBody: "Documents need your attention",
       reportTitle: "Certificates and Licenses",
       reportActive: "(Active)",
@@ -1260,10 +1260,14 @@
       ? upcoming
           .map((d) => {
             const s = getDocStatus(d);
-            const pct = Math.max(5, Math.min(100, (s.daysLeft / 90) * 100));
+            const realPct = (s.daysLeft / 360) * 100;
+            const pct = Math.max(5, Math.min(100, realPct));
+            let color = "var(--danger)";
+            if (realPct >= 50) color = "var(--ok)";
+            else if (realPct >= 30) color = "#FBBF24";
             return `<div class="dash-timeline-item status-${s.key}">
-        <span class="dtl-name">${esc(d.nameUa)}</span>
-        <div class="dtl-bar"><div class="dtl-fill" style="width:${pct}%"></div></div>
+        <span class="dtl-name">${esc(getDocName(d))}</span>
+        <div class="dtl-bar"><div class="dtl-fill" style="width:${pct}%; background:${color} !important;"></div></div>
         <span class="dtl-days">${s.daysLeft} ${t("daysLeft")}</span>
       </div>`;
           })
@@ -1357,6 +1361,11 @@
     return (doc.tags || []).length
       ? `<div class="card-tags">${doc.tags.map((tg) => `<span class="tag-pill">${esc(tg)}</span>`).join("")}</div>`
       : "";
+  }
+
+  function getDocName(doc) {
+    if (currentLang === "en") return doc.nameEn || doc.nameUa;
+    return doc.nameUa || doc.nameEn;
   }
 
   function cardTitlesHtml(doc, isRow = false) {
@@ -1533,7 +1542,7 @@
     const chips = urgent
       .map(
         (d) =>
-          `<button class="alert-chip" data-open="${d.id}">${esc(d.nameUa)} · ${stampText(d)}</button>`,
+          `<button class="alert-chip" data-open="${d.id}">${esc(getDocName(d))} · ${stampText(d)}</button>`,
       )
       .join("");
     alertBanner.classList.remove("hidden");
@@ -1888,7 +1897,7 @@
   function openPreview(doc) {
     state.previewDoc = doc;
     state.previewFileIndex = 0;
-    previewTitle.textContent = doc.nameUa;
+    previewTitle.textContent = getDocName(doc);
     renderPreviewContent();
     renderPreviewMeta();
     showModal(previewModal);
@@ -2515,7 +2524,10 @@
             : s.key === "expired"
               ? ` (${Math.abs(s.daysLeft)} ${t("daysAgo")})`
               : "";
-        return `<tr><td>${d.nameUa}${d.nameEn ? `<br><span style="font-size:9.5px;color:#666">${d.nameEn}</span>` : ""}</td><td>${d.number || "—"}</td><td>${d.issueDate ? fmtDate(d.issueDate) : "—"}</td><td>${d.noExpiry ? t("indefinitely") : d.expiryDate ? fmtDate(d.expiryDate) : "—"}</td><td class="${sc}">${sl}${note}</td><td>${(d.tags || []).join(", ") || "—"}</td></tr>`;
+        const topName = getDocName(d);
+        const botName = topName === d.nameUa ? d.nameEn : (topName === d.nameEn ? d.nameUa : "");
+        const nameHtml = botName ? `${esc(topName)}<br><span style="font-size:9.5px;color:#666">${esc(botName)}</span>` : esc(topName);
+        return `<tr><td>${nameHtml}</td><td>${d.number || "—"}</td><td>${d.issueDate ? fmtDate(d.issueDate) : "—"}</td><td>${d.noExpiry ? t("indefinitely") : d.expiryDate ? fmtDate(d.expiryDate) : "—"}</td><td class="${sc}">${sl}${note}</td><td>${(d.tags || []).join(", ") || "—"}</td></tr>`;
       })
       .join("");
     const html = `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><title>${t("reportTitle")}</title>
