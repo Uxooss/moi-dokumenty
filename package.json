@@ -1,0 +1,28 @@
+{
+  "name": "moi-dokumenty",
+  "version": "1.0.0",
+  "description": "Мої Докі - Офлайн архів сертифікатів, ліцензій та посвідчень",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.moidokumenty.app",
+    "productName": "Мої Докі",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^43.0.0",
+    "electron-builder": "^26.15.3"
+  }
+}

@@ -6,7 +6,7 @@ An offline-first, Progressive Web App (PWA) designed as a secure archive and man
 
 *   **Fully Offline Capable (PWA):** Built with Service Workers to ensure your data and application are always accessible without an active internet connection. All data stays strictly on your local device via IndexedDB.
 *   **Validity Monitoring & Alerts:** Automatically tracks the status of your documents (Valid, Expiring, Expired, Permanent). An urgent alert marquee highlights documents that are nearing expiration or have already expired.
-*   **Security & Privacy First:** Implements a customizable PIN lock system with auto-lock configurations to keep your private documents secure on shared devices.
+*   **Security & Privacy First:** Implements a customizable PIN lock system with auto-lock configurations to keep your private documents secure on shared devices. *Includes strict PIN verification checks before allowing modifications or deletions to existing documents.*
 *   **Bilingual Support:** Full, dynamic localization in both English and Ukrainian, including formatted dates and custom brandmarks (MR / МР).
 *   **Document Management & Organization:**
     *   Add rich metadata to your documents: titles, identification numbers, issue dates, expiration dates, custom descriptions, and issuer information.
@@ -30,6 +30,7 @@ An offline-first, Progressive Web App (PWA) designed as a secure archive and man
 
 ## 📦 Installation & Usage
 
-1.  **Run Locally:** You can run this project locally by serving the files via any standard HTTP server (e.g., VS Code Live Server, `python -m http.server`, `npx serve`, etc.). 
-2.  **Install as App:** Open the URL in a supported browser (Chrome, Edge, Safari) and select "Install App" or "Add to Home Screen" to install it as a standalone application on your desktop or mobile device.
-3.  **Start Adding Documents:** Set your secure PIN on first launch, tap "+ Add Document", and begin securely archiving your licenses and certificates!
+1.  **Desktop Application (New!):** You can package the app as a standalone Windows `.exe` installer. Just run `npm install` and `npm run dist` to build your own desktop app using Electron!
+2.  **Run Locally:** You can run this project locally by serving the files via any standard HTTP server (e.g., VS Code Live Server, `python -m http.server`, `npx serve`, etc.). 
+3.  **Install as Web App (PWA):** Open the URL in a supported browser (Chrome, Edge, Safari) and select "Install App" or "Add to Home Screen" to install it as a standalone PWA on your desktop or mobile device.
+4.  **Start Adding Documents:** Set your secure PIN on first launch, tap "+ Add Document", and begin securely archiving your licenses and certificates!
