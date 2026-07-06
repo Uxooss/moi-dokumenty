@@ -87,6 +87,9 @@
       confirmPinLabel: "Підтвердити PIN-код",
       pinMismatch: "PIN-коди не збігаються або занадто короткий",
       savePin: "Зберегти PIN",
+      oldPinLabel: "Поточний PIN-код",
+      incorrectOldPin: "Неправильний поточний PIN",
+      changePinTitle: "Змінити PIN-код",
       shortcutsTitle: "Гарячі клавіші",
       scNewDoc: "Новий документ",
       scSearch: "Фокус на пошук",
@@ -152,10 +155,10 @@
       noTagsYet: "Тегів ще немає",
       confirmRemovePinTitle: "Видалити PIN?",
       confirmRemovePinMsg: "Введіть поточний PIN для видалення.",
-      attentionNeeded: "потребує уваги",
+      attentionNeeded: "уваги",
       docNeedAttention: "документ потребує",
       docsNeedAttention: "документи потребують",
-      docsNeedAttention5: "документів потребують",
+      docsNeedAttention5: "документів потребує",
       expired1: "прострочений",
       expired24: "прострочені",
       expired5: "прострочених",
@@ -169,6 +172,7 @@
       doc1: "документ",
       doc24: "документи",
       doc5: "документів",
+      alertListTitle: "Потребує уваги",
       notifTitle: "Мої Докі — Увага!",
       notifBody: "Документів потребують вашої уваги",
       reportTitle: "Сертифікати та ліцензії",
@@ -276,6 +280,9 @@
       confirmPinLabel: "Confirm PIN",
       pinMismatch: "PINs do not match or too short",
       savePin: "Save PIN",
+      oldPinLabel: "Current PIN",
+      incorrectOldPin: "Incorrect current PIN",
+      changePinTitle: "Change PIN",
       shortcutsTitle: "Keyboard Shortcuts",
       scNewDoc: "New document",
       scSearch: "Focus search",
@@ -341,7 +348,7 @@
       noTagsYet: "No tags yet",
       confirmRemovePinTitle: "Remove PIN?",
       confirmRemovePinMsg: "Enter current PIN to remove.",
-      attentionNeeded: "need attention",
+      attentionNeeded: "attention",
       docNeedAttention: "document needs",
       docsNeedAttention: "documents need",
       docsNeedAttention5: "documents need",
@@ -358,6 +365,7 @@
       doc1: "document",
       doc24: "documents",
       doc5: "documents",
+      alertListTitle: "Attention required",
       notifTitle: "My Docs — Attention!",
       notifBody: "Documents need your attention",
       reportTitle: "Certificates and Licenses",
@@ -552,6 +560,7 @@
     previewFileIndex: 0,
     selectedIds: new Set(),
     undoStack: [],
+    lastPinUnlockSuccess: false,
   };
   let formTags = [];
   const ALLOWED_TYPES = [
@@ -644,6 +653,8 @@
     pinError,
     pinSkipBtn,
     pinSetupModal,
+    oldPinField,
+    pinInput0,
     pinInput1,
     pinInput2,
     confirmPinBtn,
@@ -747,6 +758,8 @@
     pinError = $("pinError");
     pinSkipBtn = $("pinSkipBtn");
     pinSetupModal = $("pinSetupModal");
+    oldPinField = $("oldPinField");
+    pinInput0 = $("pinInput0");
     pinInput1 = $("pinInput1");
     pinInput2 = $("pinInput2");
     confirmPinBtn = $("confirmPinBtn");
@@ -1027,6 +1040,7 @@
       setPinAttempts(0);
       pinBuffer = "";
       updatePinDots();
+      state.lastPinUnlockSuccess = true;
       closePINOverlay();
       resetAutoLock();
     } else {
@@ -1059,6 +1073,30 @@
   function closePINOverlay() {
     pinOverlay.classList.add("hidden");
     document.body.style.overflow = "";
+  }
+
+  async function verifyCurrentPIN(msg) {
+    const hash = await getPINHash();
+    if (!hash) return true;
+
+    return new Promise((resolve) => {
+      pinBuffer = "";
+      updatePinDots();
+      pinError.classList.add("hidden");
+      pinTitle.textContent = t("pinEnter");
+      pinSubtitle.textContent = msg || t("pinAccess");
+      pinSkipBtn.classList.remove("hidden");
+      pinOverlay.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      state.lastPinUnlockSuccess = false;
+
+      const checkInterval = setInterval(() => {
+        if (pinOverlay.classList.contains("hidden")) {
+          clearInterval(checkInterval);
+          resolve(state.lastPinUnlockSuccess);
+        }
+      }, 200);
+    });
   }
 
   function updatePINUI(hasPin) {
@@ -1111,10 +1149,19 @@
     pinSkipBtn.addEventListener("click", () => closePINOverlay());
     lockBtn.addEventListener("click", () => openPINOverlay());
 
-    setPinBtn.addEventListener("click", () => {
+    setPinBtn.addEventListener("click", async () => {
+      pinInput0.value = "";
       pinInput1.value = "";
       pinInput2.value = "";
       pinSetupError.classList.add("hidden");
+      const hash = await getPINHash();
+      if (hash) {
+        oldPinField.classList.remove("hidden");
+        $("pinSetupTitle").textContent = t("changePinTitle");
+      } else {
+        oldPinField.classList.add("hidden");
+        $("pinSetupTitle").textContent = t("pinSetupTitle");
+      }
       showModal(pinSetupModal);
     });
 
@@ -1128,37 +1175,28 @@
       );
       if (!ok) return;
       /* Verify via PIN overlay */
-      const hash = await getPINHash();
-      if (hash) {
-        await new Promise((resolve) => {
-          pinBuffer = "";
-          updatePinDots();
-          pinError.classList.add("hidden");
-          pinTitle.textContent = t("pinEnter");
-          pinSubtitle.textContent = t("confirmRemovePinMsg");
-          pinSkipBtn.classList.remove("hidden");
-          pinOverlay.classList.remove("hidden");
-          document.body.style.overflow = "hidden";
-          const origTryUnlock = tryUnlock;
-          const checkInterval = setInterval(() => {
-            if (pinOverlay.classList.contains("hidden")) {
-              clearInterval(checkInterval);
-              resolve();
-            }
-          }, 200);
-        });
-        const h2 = await getPINHash();
-        if (!h2) return; /* already removed somehow */
-      }
+      if (!(await verifyCurrentPIN(t("confirmRemovePinMsg")))) return;
       await dbDelete("settings", "pinHash");
       updatePINUI(false);
       showToast("toastPinRemoved", "success");
     });
 
     confirmPinBtn.addEventListener("click", async () => {
-      const p1 = pinInput1.value.trim(),
+      const p0 = pinInput0.value.trim(),
+        p1 = pinInput1.value.trim(),
         p2 = pinInput2.value.trim();
+      
+      const hash = await getPINHash();
+      if (hash) {
+        if (p0.length !== 4 || await sha256(p0) !== hash) {
+          pinSetupError.textContent = t("incorrectOldPin") || "Неправильний поточний PIN";
+          pinSetupError.classList.remove("hidden");
+          return;
+        }
+      }
+      
       if (p1.length !== 4 || !/^\d{4}$/.test(p1) || p1 !== p2) {
+        pinSetupError.textContent = t("pinMismatch");
         pinSetupError.classList.remove("hidden");
         return;
       }
@@ -1550,6 +1588,7 @@
       <div class="alert-header" id="alertBannerHeader">
         <div class="alert-icon">⚠</div>
         <div class="alert-text"><strong>${urgent.length} ${pluralUk(urgent.length, [t("docNeedAttention"), t("docsNeedAttention"), t("docsNeedAttention5")])} ${t("attentionNeeded")}</strong></div>
+        <div class="alert-icon">⚠</div>
       </div>
       <div class="alert-marquee">
         <div class="alert-chips">${chips}</div>
@@ -1752,7 +1791,8 @@
     nameUaInput.focus();
   }
 
-  function openEditModal(doc) {
+  async function openEditModal(doc) {
+    if (!(await verifyCurrentPIN())) return;
     state.editingId = doc.id;
     state.confirmDuplicate = false;
     nameUaInput.value = doc.nameUa || "";
@@ -1987,6 +2027,7 @@
 
   /* ===================== 19. Archive / Unarchive ===================== */
   async function archiveDoc(id) {
+    if (!(await verifyCurrentPIN())) return;
     const d = state.docs.find((x) => x.id === id);
     if (!d) return;
     const clone = Object.assign({}, d, { files: d.files });
@@ -1999,6 +2040,7 @@
   }
 
   async function unarchiveDoc(id) {
+    if (!(await verifyCurrentPIN())) return;
     const d = state.docs.find((x) => x.id === id);
     if (!d) return;
     d.archived = false;

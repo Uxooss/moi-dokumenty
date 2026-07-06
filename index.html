@@ -1113,6 +1113,17 @@
             4-значний числовий PIN-код. Введіть його кожного разу при відкритті
             застосунку.
           </p>
+          <div class="field hidden" id="oldPinField">
+            <label for="pinInput0" data-i18n="oldPinLabel">Поточний PIN-код</label>
+            <input
+              type="password"
+              inputmode="numeric"
+              maxlength="4"
+              id="pinInput0"
+              placeholder="••••"
+              class="pin-setup-input"
+            />
+          </div>
           <div class="field">
             <label for="pinInput1">PIN-код</label>
             <input
@@ -1281,12 +1292,12 @@
       <div class="modal">
         <div class="modal-header">
           <h2 id="alertListTitle" data-i18n="alertListTitle">
-            Документи, що потребують уваги
+            Потребує уваги
           </h2>
           <button
             type="button"
             class="modal-close"
-            data-close="alertListModal"
+            data-close-modal="alertListModal"
             aria-label="Закрити"
             data-i18n-aria="close"
           >
