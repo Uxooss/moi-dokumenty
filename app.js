@@ -421,6 +421,16 @@
     currentLang = lang;
     localStorage.setItem("lang", lang);
     document.documentElement.setAttribute("data-lang", lang);
+    
+    const langBtn = document.getElementById("langToggleBtn");
+    if (langBtn) {
+      if (lang === "en") {
+        langBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><clipPath id="ua-clip"><rect x="2" y="6" width="20" height="12" rx="2" /></clipPath><g clip-path="url(#ua-clip)"><rect x="2" y="6" width="20" height="6" fill="#0057b7" /><rect x="2" y="12" width="20" height="6" fill="#ffd700" /></g><rect x="2" y="6" width="20" height="12" rx="2" stroke="currentColor" stroke-width="1.5" /></svg>`;
+      } else {
+        langBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><clipPath id="uk-clip"><rect x="2" y="6" width="20" height="12" rx="2" /></clipPath><g clip-path="url(#uk-clip)"><rect x="2" y="6" width="20" height="12" fill="#012169" /><path d="M2 6 L22 18 M2 18 L22 6" stroke="#ffffff" stroke-width="2.5" /><path d="M2 6 L22 18 M2 18 L22 6" stroke="#C8102E" stroke-width="1" /><path d="M12 6 L12 18 M2 12 L22 12" stroke="#ffffff" stroke-width="4" /><path d="M12 6 L12 18 M2 12 L22 12" stroke="#C8102E" stroke-width="2" /></g><rect x="2" y="6" width="20" height="12" rx="2" stroke="currentColor" stroke-width="1.5" /></svg>`;
+      }
+    }
+
     applyI18n();
     renderAll();
   }
@@ -438,6 +448,15 @@
     localStorage.setItem("theme", theme);
     const meta = document.getElementById("metaThemeColor");
     if (meta) meta.content = theme === "dark" ? "#0F1117" : "#ffffff";
+    
+    const themeBtn = document.getElementById("themeToggleBtn");
+    if (themeBtn) {
+      if (theme === "dark") {
+        themeBtn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FDB813" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5" fill="#FDB813"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+      } else {
+        themeBtn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="#4A4E5C" stroke="#4A4E5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+      }
+    }
   }
 
   function toggleTheme() {
@@ -608,6 +627,8 @@
     addBtn,
     settingsBtn,
     helpBtn,
+    themeToggleBtn,
+    langToggleBtn,
     helpModal,
     backupBtn,
     topbarBackupBtn,
@@ -715,6 +736,8 @@
     addBtn = $("addBtn");
     settingsBtn = $("settingsBtn");
     helpBtn = $("helpBtn");
+    themeToggleBtn = $("themeToggleBtn");
+    langToggleBtn = $("langToggleBtn");
     helpModal = $("helpModal");
     backupBtn = $("backupBtn");
     topbarBackupBtn = $("topbarBackupBtn");
@@ -2599,6 +2622,14 @@
     if (helpBtn) {
       helpBtn.addEventListener("click", () => showModal(helpModal));
     }
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", toggleTheme);
+    }
+    if (langToggleBtn) {
+      langToggleBtn.addEventListener("click", () => {
+        setLang(currentLang === "en" ? "uk" : "en");
+      });
+    }
     settingsBtn.addEventListener("click", async () => {
       warnDaysInput.value = state.settings.warnDays;
       if (autoLockSelect)
@@ -2854,8 +2885,9 @@
   async function init() {
     try {
       cacheDOMRefs();
-      applyI18n();
-      document.documentElement.setAttribute("data-lang", currentLang);
+      
+      setTheme(getTheme());
+      setLang(currentLang);
 
       await loadSettings();
       await initPIN();
