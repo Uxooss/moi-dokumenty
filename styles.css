@@ -3015,3 +3015,6 @@ select:focus-visible {
     text-decoration: underline;
   }
 }
+/* Language specific display logic */
+html[data-lang="uk"] .lang-en-only { display: none !important; }
+html[data-lang="en"] .lang-uk-only { display: none !important; }

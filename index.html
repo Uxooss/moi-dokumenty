@@ -229,6 +229,26 @@
             </svg>
           </button>
           <button
+            id="helpBtn"
+            class="icon-btn"
+            title="User Guide"
+            data-i18n-title="helpTitle"
+            aria-label="User Guide"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </button>
+          <button
             id="backupBtn"
             class="btn-ghost topbar-btn-text"
             data-i18n="backupBtn"
@@ -1275,6 +1295,182 @@
             <div class="shortcut-row">
               <div class="shortcut-keys"><kbd>?</kbd></div>
               <span data-i18n="scHelp">Ця довідка</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== HELP / USER MANUAL MODAL ===================== -->
+    <div
+      id="helpModal"
+      class="modal-overlay hidden"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="modal" style="max-width: 800px; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-header">
+          <h2 data-i18n="helpTitle">User Guide</h2>
+          <button
+            class="modal-close"
+            data-close-modal="helpModal"
+            aria-label="Закрити"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body" style="overflow-y: auto; padding: 1.5rem; line-height: 1.6; user-select: text;">
+          <div id="helpContent" class="markdown-body">
+            <div class="lang-en-only">
+              <h3>App Overview</h3>
+              <p><strong>Мої Докі</strong> is an offline-first application. This means it doesn't require an active internet connection to function, and all your data is stored strictly and securely on your own device. It automatically tracks the validity of your documents and notifies you when they are expiring, so you never miss a renewal deadline.</p>
+
+              <h3 style="margin-top: 1.5rem;">Getting Started</h3>
+              <p>When you open the application for the first time, you can set up a secure <strong>PIN Code</strong>. </p>
+              <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li>This PIN prevents unauthorized access to your archived documents. </li>
+                <li><em>Note:</em> Please remember this PIN. Because your data is encrypted and stored locally on your device, there is no remote server that can recover a forgotten PIN.</li>
+              </ul>
+
+              <h3 style="margin-top: 1.5rem;">User Interface Overview</h3>
+              <p>The main interface is divided into several areas for quick access:</p>
+              <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li><strong>Top Bar:</strong> Contains the main Search input, quick action buttons (Dashboard, Calendar Export, Print Report, Settings), and the "+ Add Document" button.</li>
+                <li><strong>Sidebar / Filter Panel:</strong> Allows you to quickly filter documents by status (Active, Archive, Expiring, Valid, etc.), Tags, or change the sorting order.</li>
+                <li><strong>Main Document Area:</strong> Displays all your documents as tiles or lists.</li>
+                <li><strong>Dashboard (Statistics):</strong> A visual overview of your document statuses (Total, Valid, Expiring Soon, Expired, Permanent) and a timeline of upcoming expirations.</li>
+              </ul>
+
+              <h3 style="margin-top: 1.5rem;">Step-by-Step Guidance</h3>
+              <h4 style="margin-top: 1rem;">Adding a Document</h4>
+              <ol style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li>Click the <strong>+ Add Document</strong> button in the top right corner (or the floating button on mobile).</li>
+                <li>Fill in the essential details:
+                  <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                    <li><strong>Title:</strong> The name of the document (e.g., "Basic Safety Training").</li>
+                    <li><strong>Number:</strong> (Optional) Document ID or serial number.</li>
+                    <li><strong>Dates:</strong> Enter the "Issue Date" and "Expiry Date". If the document does not expire, check the "Permanent / No Expiry" checkbox.</li>
+                    <li><strong>Tags:</strong> Add categories (e.g., "Medical", "Seaman's Book") to make filtering easier.</li>
+                  </ul>
+                </li>
+                <li><strong>Upload Files:</strong> Click to browse or drag-and-drop a scan/photo of the document (PDF, JPG, PNG).</li>
+                <li>Click <strong>Save</strong>. The document is now stored in your archive.</li>
+              </ol>
+
+              <h4 style="margin-top: 1rem;">Viewing and Editing Documents</h4>
+              <ol style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li>Click on any document card to open the preview modal.</li>
+                <li>In the preview, you can view the attached file.</li>
+                <li>To edit the document's details, click the <strong>Edit (✏️ Pencil) icon</strong> in the top right corner of the preview.</li>
+                <li>To download a copy of the original file, click the <strong>Download (⬇️) icon</strong>.</li>
+              </ol>
+
+              <h4 style="margin-top: 1rem;">Searching and Filtering</h4>
+              <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li><strong>Search:</strong> Use the search bar at the top to instantly find documents by name, number, or description.</li>
+                <li><strong>Filter by Status:</strong> Use the left sidebar to show only "Active" or "Archive" documents, or filter by expiration status (e.g., "Expiring Soon").</li>
+                <li><strong>Filter by Tags:</strong> Click on any tag in the sidebar to only show documents with that specific category.</li>
+              </ul>
+
+              <h3 style="margin-top: 1.5rem;">Tools & Settings</h3>
+              <p>The application provides several powerful tools to manage your archive:</p>
+              <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li><strong>Dashboard (📊 Chart Icon):</strong> View a summary of your documents and a 360-day timeline of upcoming expirations.</li>
+                <li><strong>Print Report (🖨️ Printer Icon):</strong> Generates a clean, printable summary list of all your currently active documents.</li>
+                <li><strong>Calendar Export (📅 Calendar Icon):</strong> Exports your document expiration dates as an <code>.ics</code> file. You can import this file into Google Calendar, Apple Calendar, or Outlook to get native phone reminders.</li>
+                <li><strong>Backup & Restore (💾 Save Icon):</strong> Found in Settings. You should regularly click "Backup" to save a secure copy of your entire vault to a <code>.json</code> file on your computer. If you switch devices, you can "Restore" from this file.</li>
+              </ul>
+
+              <hr style="margin: 2rem 0; opacity: 0.2; border: 1px solid currentColor;"/>
+
+              <h3 style="margin-top: 1.5rem;">Disclaimer & Support</h3>
+              <p><strong>Disclaimer:</strong><br/>
+              This application is created solely for personal use and is not for sale or distribution without the explicit permission of the author. I bear no liability in case of any leak, loss, or corruption of personal information. <strong>This app is not collecting and/or transmitting any personal data over the internet</strong>; all data is stored exclusively on your local device. The primary purpose of this application is only to make the life of the seafarer easier and to organize personal documents for tracking, monitoring, and control.</p>
+
+              <p style="margin-top: 1rem;"><strong>Feedback, Bugs, and Suggestions:</strong><br/>
+              If you encounter any issues while using the app or have ideas for improvement, please contact me directly:<br/>
+              <a href="mailto:alvarus@ua.fm" style="color: var(--primary); text-decoration: underline;">alvarus@ua.fm</a></p>
+            </div>
+            
+            <div class="lang-uk-only">
+              <h3>Огляд застосунку</h3>
+              <p><strong>Мої Докі</strong> працює повністю офлайн. Це означає, що для його роботи не потрібне підключення до Інтернету, а всі ваші дані зберігаються суворо та надійно на вашому власному пристрої. Застосунок автоматично відстежує термін дії ваших документів та повідомляє, коли вони закінчуються, щоб ви ніколи не пропустили час поновлення.</p>
+
+              <h3 style="margin-top: 1.5rem;">Початок роботи</h3>
+              <p>Відкриваючи застосунок вперше, ви можете налаштувати безпечний <strong>PIN-код</strong>. </p>
+              <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li>Цей PIN-код запобігає несанкціонованому доступу до вашого архіву. </li>
+                <li><em>Примітка:</em> Будь ласка, запам'ятайте цей PIN-код. Оскільки ваші дані зашифровані та зберігаються локально на вашому пристрої, віддаленого сервера, який міг би відновити забутий PIN, не існує.</li>
+              </ul>
+
+              <h3 style="margin-top: 1.5rem;">Огляд інтерфейсу користувача</h3>
+              <p>Головний інтерфейс поділено на кілька зон для швидкого доступу:</p>
+              <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li><strong>Верхня панель (Top Bar):</strong> Містить головне поле пошуку, кнопки швидких дій (Статистика, Експорт у календар, Друкований звіт, Налаштування) та кнопку "+ Додати документ".</li>
+                <li><strong>Бічна панель / Фільтри:</strong> Дозволяє швидко фільтрувати документи за статусом (Активні, Архів, Спливають, Дійсні тощо), тегами, або змінювати порядок сортування.</li>
+                <li><strong>Головна область документів:</strong> Відображає всі ваші документи у вигляді плиток або списку.</li>
+                <li><strong>Статистика (Dashboard):</strong> Візуальний огляд статусів ваших документів (Всього, Дійсні, Спливають, Прострочені, Безстрокові) та шкала часу найближчих термінів закінчення.</li>
+              </ul>
+
+              <h3 style="margin-top: 1.5rem;">Покрокова інструкція</h3>
+              <h4 style="margin-top: 1rem;">Додавання документа</h4>
+              <ol style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li>Натисніть кнопку <strong>+ Додати документ</strong> у правому верхньому куті (або плаваючу кнопку на мобільному пристрої).</li>
+                <li>Заповніть основні дані:
+                  <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                    <li><strong>Назва:</strong> Назва документа (напр., "Basic Safety Training").</li>
+                    <li><strong>Номер:</strong> (Необов'язково) ID документа або серійний номер.</li>
+                    <li><strong>Дати:</strong> Введіть "Дату видачі" та "Дійсний до". Якщо документ не має терміну дії, встановіть прапорець "Безстроковий документ".</li>
+                    <li><strong>Теги:</strong> Додайте категорії (напр., "Медичні", "Паспорт моряка"), щоб полегшити фільтрацію.</li>
+                  </ul>
+                </li>
+                <li><strong>Файли документа:</strong> Натисніть, щоб вибрати, або перетягніть сюди скан/фотографію документа (PDF, JPG, PNG).</li>
+                <li>Натисніть <strong>Зберегти</strong>. Документ тепер зберігається у вашому архіві.</li>
+              </ol>
+
+              <h4 style="margin-top: 1rem;">Перегляд та редагування документів</h4>
+              <ol style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li>Натисніть на картку будь-якого документа, щоб відкрити вікно попереднього перегляду.</li>
+                <li>У вікні перегляду ви можете побачити прикріплений файл.</li>
+                <li>Щоб відредагувати деталі документа, натисніть на <strong>іконку Редагування (✏️ Олівець)</strong> у верхньому правому куті вікна перегляду.</li>
+                <li>Щоб завантажити копію оригінального файлу, натисніть на <strong>іконку Завантажити (⬇️)</strong>.</li>
+              </ol>
+
+              <h4 style="margin-top: 1rem;">Пошук та фільтрація</h4>
+              <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li><strong>Пошук:</strong> Використовуйте рядок пошуку вгорі, щоб миттєво знайти документи за назвою, номером або примітками.</li>
+                <li><strong>Фільтр за статусом:</strong> Використовуйте ліву бічну панель, щоб показати лише "Активні" або "Архівні" документи, або фільтруйте за статусом терміну дії (напр., "Спливають").</li>
+                <li><strong>Фільтр за тегами:</strong> Натисніть на будь-який тег на бічній панелі, щоб показати лише документи з цією конкретною категорією.</li>
+              </ul>
+
+              <h3 style="margin-top: 1.5rem;">Інструменти та налаштування</h3>
+              <p>Застосунок надає кілька потужних інструментів для управління вашим архівом:</p>
+              <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+                <li><strong>Статистика (📊 іконка Графіка):</strong> Перегляд короткого підсумку ваших документів та шкали часу майбутніх закінчень термінів дії на 360 днів.</li>
+                <li><strong>Друкований звіт (🖨️ іконка Принтера):</strong> Створює чистий, зручний для друку підсумковий список усіх ваших активних документів.</li>
+                <li><strong>Експорт у календар (📅 іконка Календаря):</strong> Експортує дати закінчення терміну дії ваших документів у файл <code>.ics</code>. Ви можете імпортувати цей файл до Google Календаря, Apple Календаря або Outlook, щоб отримувати нативні нагадування на телефон.</li>
+                <li><strong>Резервна копія та Відновлення (💾 Налаштування):</strong> Знаходяться в Налаштуваннях. Рекомендується регулярно натискати "Зберегти копію", щоб надійно зберігати весь ваш архів у файл <code>.json</code> на вашому комп'ютері. Якщо ви зміните пристрій, ви зможете "Відновити" дані з цього файлу.</li>
+              </ul>
+
+              <hr style="margin: 2rem 0; opacity: 0.2; border: 1px solid currentColor;"/>
+
+              <h3 style="margin-top: 1.5rem;">Відмова від відповідальності та підтримка</h3>
+              <p><strong>Відмова від відповідальності:</strong><br/>
+              Цей застосунок створено виключно для особистого використання, він не призначений для продажу або розповсюдження без прямого дозволу автора. Я не несу жодної відповідальності у разі витоку, втрати або пошкодження особистої інформації. <strong>Цей застосунок не збирає та/або не передає жодних персональних даних через Інтернет</strong>; усі дані зберігаються виключно на вашому локальному пристрої. Головна мета цього застосунку - лише полегшити життя морякам та організувати особисті документи для відстеження, моніторингу та контролю.</p>
+
+              <p style="margin-top: 1rem;"><strong>Відгуки, помилки та пропозиції:</strong><br/>
+              Якщо у вас виникли проблеми під час використання застосунку або є ідеї щодо покращення, будь ласка, зв'яжіться зі мною безпосередньо:<br/>
+              <a href="mailto:alvarus@ua.fm" style="color: var(--primary); text-decoration: underline;">alvarus@ua.fm</a></p>
             </div>
           </div>
         </div>

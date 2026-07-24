@@ -200,6 +200,7 @@
       labelLang: "Мова інтерфейсу",
       themeDark: "Темна",
       themeLight: "Світла",
+      helpTitle: "Користування",
     },
     en: {
       brandMark: "MD",
@@ -393,6 +394,7 @@
       labelLang: "Language",
       themeDark: "Dark",
       themeLight: "Light",
+      helpTitle: "User Guide",
     },
   };
 
@@ -605,6 +607,8 @@
     alertListBody,
     addBtn,
     settingsBtn,
+    helpBtn,
+    helpModal,
     backupBtn,
     topbarBackupBtn,
     reportBtn,
@@ -710,6 +714,8 @@
     alertListBody = $("alertListBody");
     addBtn = $("addBtn");
     settingsBtn = $("settingsBtn");
+    helpBtn = $("helpBtn");
+    helpModal = $("helpModal");
     backupBtn = $("backupBtn");
     topbarBackupBtn = $("topbarBackupBtn");
     reportBtn = $("reportBtn");
@@ -2590,6 +2596,9 @@
 
   /* ===================== 28. Settings (extended) ===================== */
   function bindSettingsEvents() {
+    if (helpBtn) {
+      helpBtn.addEventListener("click", () => showModal(helpModal));
+    }
     settingsBtn.addEventListener("click", async () => {
       warnDaysInput.value = state.settings.warnDays;
       if (autoLockSelect)
