@@ -7,19 +7,13 @@
       <stop offset="100%" stop-color="#0B0D13" />
     </radialGradient>
     
-    <!-- Gold Metallic Gradients -->
+    <!-- Metallic Gold Gradients -->
     <linearGradient id="goldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFF2B2" />
+      <stop offset="0%" stop-color="#FFF5C2" />
       <stop offset="25%" stop-color="#E5BE64" />
       <stop offset="60%" stop-color="#C69436" />
       <stop offset="85%" stop-color="#DFB457" />
       <stop offset="100%" stop-color="#8F6216" />
-    </linearGradient>
-
-    <linearGradient id="goldLight" x1="20%" y1="0%" x2="80%" y2="100%">
-      <stop offset="0%" stop-color="#FFEBB0" />
-      <stop offset="50%" stop-color="#D4A853" />
-      <stop offset="100%" stop-color="#9E6E1A" />
     </linearGradient>
 
     <linearGradient id="goldTrim" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -28,129 +22,194 @@
       <stop offset="100%" stop-color="#FFF8D6" />
     </linearGradient>
 
-    <!-- Document Surface Gradient -->
-    <linearGradient id="docGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#222838" />
-      <stop offset="100%" stop-color="#161924" />
+    <linearGradient id="stripeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D4A853" />
+      <stop offset="25%" stop-color="#FFF0B3" />
+      <stop offset="70%" stop-color="#E5BE64" />
+      <stop offset="100%" stop-color="#A87720" />
     </linearGradient>
 
-    <linearGradient id="backDocGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1B1F2D" />
-      <stop offset="100%" stop-color="#11141D" />
+    <!-- Certificate Sheet Gradient -->
+    <linearGradient id="certBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBF8EE" />
+      <stop offset="100%" stop-color="#EFE8D6" />
     </linearGradient>
 
-    <!-- Subtle Shadows -->
-    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+    <!-- Epaulette Navy Body -->
+    <linearGradient id="epauletNavy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B2238" />
+      <stop offset="60%" stop-color="#101525" />
+      <stop offset="100%" stop-color="#090C16" />
+    </linearGradient>
+
+    <!-- Drop Shadows -->
+    <filter id="tileShadow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.65" />
     </filter>
     
-    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#D4A853" flood-opacity="0.35" />
+    <filter id="certShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="-6" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.55" />
     </filter>
 
-    <filter id="sealShadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.7" />
+    <filter id="epauletShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="8" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.75" />
     </filter>
   </defs>
 
-  <!-- Base App Squircle -->
-  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bgGlow)" filter="url(#dropShadow)" />
-  
-  <!-- Outer Gold Rim -->
-  <rect x="24" y="24" width="464" height="464" rx="108" fill="none" stroke="url(#goldTrim)" stroke-width="4.5" stroke-opacity="0.85" />
-  
-  <!-- Subtle Inner Inset Border -->
+  <!-- Base App Squircle Tile -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bgGlow)" filter="url(#tileShadow)" />
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="none" stroke="url(#goldTrim)" stroke-width="4.5" stroke-opacity="0.9" />
   <rect x="36" y="36" width="440" height="440" rx="96" fill="none" stroke="#2E344A" stroke-width="1.5" stroke-opacity="0.6" />
 
-  <!-- Center Artwork Group -->
-  <g transform="translate(0, -6)">
-    <!-- BACK DOCUMENT (Layered behind) -->
-    <g transform="rotate(7 256 252)">
-      <rect x="156" y="112" width="200" height="268" rx="16" fill="url(#backDocGrad)" stroke="#343B52" stroke-width="2" opacity="0.85" />
-      <!-- Subtle watermark lines -->
-      <line x1="184" y1="160" x2="328" y2="160" stroke="#2B3145" stroke-width="4" stroke-linecap="round" />
-      <line x1="184" y1="184" x2="300" y2="184" stroke="#2B3145" stroke-width="4" stroke-linecap="round" />
-      <line x1="184" y1="208" x2="316" y2="208" stroke="#2B3145" stroke-width="4" stroke-linecap="round" />
+  <!-- ================= 1. MARITIME CERTIFICATE (Background Layer) ================= -->
+  <g transform="rotate(-9 240 250)" filter="url(#certShadow)">
+    <!-- Certificate Paper Sheet -->
+    <rect x="100" y="86" width="224" height="310" rx="6" fill="url(#certBg)" stroke="#D4C4A3" stroke-width="2" />
+    <!-- Certificate Inner Gold Border -->
+    <rect x="110" y="96" width="204" height="290" rx="4" fill="none" stroke="#C5A866" stroke-width="1.5" stroke-opacity="0.8" />
+    <rect x="113" y="99" width="198" height="284" rx="2" fill="none" stroke="#D4C4A3" stroke-width="0.8" stroke-dasharray="3 2" />
+    
+    <!-- Maritime Anchor Heading Emblem -->
+    <circle cx="212" cy="132" r="16" fill="none" stroke="#2A3859" stroke-width="1.8" />
+    <!-- Mini anchor in cert header -->
+    <path d="M 212 122 L 212 142 M 206 126 L 218 126 M 204 135 C 204 144 220 144 220 135" fill="none" stroke="#2A3859" stroke-width="1.6" stroke-linecap="round" />
+
+    <!-- Certificate Text Lines -->
+    <rect x="134" y="160" width="156" height="6" rx="2" fill="#20293D" />
+    <rect x="150" y="172" width="124" height="4" rx="2" fill="#4B5875" />
+    <rect x="130" y="184" width="164" height="3" rx="1.5" fill="#8C97B0" />
+    
+    <line x1="126" y1="202" x2="298" y2="202" stroke="#D8CEB7" stroke-width="1" />
+
+    <!-- Text row placeholders -->
+    <rect x="126" y="214" width="130" height="4" rx="2" fill="#727E96" />
+    <rect x="126" y="226" width="110" height="4" rx="2" fill="#8C97B0" />
+    <rect x="126" y="238" width="140" height="4" rx="2" fill="#8C97B0" />
+    <rect x="126" y="250" width="90" height="4" rx="2" fill="#8C97B0" />
+
+    <!-- Official Stamp & Seal at bottom left of cert -->
+    <g transform="translate(156, 326)">
+      <circle cx="0" cy="0" r="26" fill="none" stroke="#254378" stroke-width="2" stroke-dasharray="5 2.5" />
+      <circle cx="0" cy="0" r="20" fill="none" stroke="#254378" stroke-width="1.2" />
+      <path d="M 0 -12 L 0 12 M -7 -6 L 7 -6 M -11 3 C -11 14 11 14 11 3" fill="none" stroke="#254378" stroke-width="1.8" stroke-linecap="round" />
+      <text x="0" y="18" text-anchor="middle" font-family="'Inter', sans-serif" font-size="5" font-weight="700" fill="#254378">OFFICIAL</text>
     </g>
 
-    <!-- FRONT PRIMARY DOCUMENT -->
-    <g filter="url(#dropShadow)">
-      <!-- Main body with folded top-right corner -->
-      <path d="M 148 108
-               L 312 108
-               L 364 160
-               L 364 380
-               A 16 16 0 0 1 348 396
-               L 164 396
-               A 16 16 0 0 1 148 380
-               Z"
-            fill="url(#docGrad)"
-            stroke="url(#goldLinear)"
-            stroke-width="3" />
+    <!-- Gold Wax Wafer Seal -->
+    <circle cx="206" cy="336" r="16" fill="url(#goldLinear)" opacity="0.9" />
+  </g>
 
-      <!-- Folded Corner Flap -->
-      <path d="M 312 108
-               L 312 152
-               A 8 8 0 0 0 320 160
-               L 364 160
-               Z"
-            fill="#1E2332"
-            stroke="url(#goldLinear)"
-            stroke-width="2.5" />
+  <!-- ================= 2. MERCHANT MARINE CAPTAIN EPAULET (Foreground Layer) ================= -->
+  <g transform="translate(254, 114)" filter="url(#epauletShadow)">
+    <!-- Main Epaulet Body (Classic Curved / Pointed Top Shoulder Board) -->
+    <path d="M 12 40
+             C 12 12, 140 12, 140 40
+             L 140 300
+             A 10 10 0 0 1 130 310
+             L 22 310
+             A 10 10 0 0 1 12 300
+             Z"
+          fill="url(#epauletNavy)"
+          stroke="url(#goldTrim)"
+          stroke-width="4" />
 
-      <!-- Document Header Guilloche / Accent Bar -->
-      <rect x="180" y="148" width="104" height="6" rx="3" fill="url(#goldLinear)" />
+    <!-- Inner subtle border / piping -->
+    <path d="M 20 44
+             C 20 22, 132 22, 132 44
+             L 132 298
+             A 4 4 0 0 1 128 302
+             L 24 302
+             A 4 4 0 0 1 20 298
+             Z"
+          fill="none"
+          stroke="#323F63"
+          stroke-width="1.5" />
 
-      <!-- Document Content Placeholder Lines -->
-      <rect x="180" y="174" width="152" height="4" rx="2" fill="#3D4560" />
-      <rect x="180" y="196" width="128" height="4" rx="2" fill="#3D4560" />
-      <rect x="180" y="218" width="144" height="4" rx="2" fill="#3D4560" />
-      <rect x="180" y="240" width="112" height="4" rx="2" fill="#3D4560" />
+    <!-- Top Uniform Button -->
+    <circle cx="76" cy="38" r="8" fill="url(#goldLinear)" stroke="#8F6216" stroke-width="1.2" />
 
-      <!-- Security Shield Watermark on Document -->
-      <path d="M 256 264
-               C 278 264 296 270 296 270
-               C 296 312 278 336 256 348
-               C 234 336 216 312 216 270
-               C 216 270 234 264 256 264 Z"
+    <!-- ================= 4 GOLD STRIPES (CAPTAIN / MASTER) ================= -->
+    <g id="epauletStripes">
+      <!-- Stripe 1 (Top) -->
+      <g transform="translate(18, 76)">
+        <rect x="0" y="0" width="116" height="17" rx="2" fill="url(#stripeGrad)" stroke="#8F6216" stroke-width="1" />
+        <!-- Braided Lace texture -->
+        <line x1="2" y1="8.5" x2="114" y2="8.5" stroke="#FFEBB0" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.8" />
+      </g>
+
+      <!-- Stripe 2 -->
+      <g transform="translate(18, 102)">
+        <rect x="0" y="0" width="116" height="17" rx="2" fill="url(#stripeGrad)" stroke="#8F6216" stroke-width="1" />
+        <line x1="2" y1="8.5" x2="114" y2="8.5" stroke="#FFEBB0" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.8" />
+      </g>
+
+      <!-- Stripe 3 -->
+      <g transform="translate(18, 128)">
+        <rect x="0" y="0" width="116" height="17" rx="2" fill="url(#stripeGrad)" stroke="#8F6216" stroke-width="1" />
+        <line x1="2" y1="8.5" x2="114" y2="8.5" stroke="#FFEBB0" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.8" />
+      </g>
+
+      <!-- Stripe 4 (Bottom) -->
+      <g transform="translate(18, 154)">
+        <rect x="0" y="0" width="116" height="17" rx="2" fill="url(#stripeGrad)" stroke="#8F6216" stroke-width="1" />
+        <line x1="2" y1="8.5" x2="114" y2="8.5" stroke="#FFEBB0" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.8" />
+      </g>
+    </g>
+
+    <!-- ================= GOLDEN FOULED ANCHOR INSIGNIA ================= -->
+    <g transform="translate(76, 236)">
+      <!-- Anchor Shadow / Glow -->
+      <circle cx="0" cy="0" r="38" fill="#D4A853" opacity="0.08" filter="blur(6px)" />
+
+      <!-- Fouled Rope Coiling (behind shank) -->
+      <path d="M 0 -36
+               C 8 -36, 12 -28, 7 -20
+               C 2 -12, -10 -10, -10 2
+               C -10 12, 12 12, 12 24
+               C 12 36, -8 38, -14 30"
             fill="none"
-            stroke="#D4A853"
-            stroke-opacity="0.22"
-            stroke-width="3" />
-    </g>
-
-    <!-- OFFICIAL CERTIFICATE GOLD SEAL (Bottom Right of Document) -->
-    <g transform="translate(322, 350)" filter="url(#sealShadow)">
-      <!-- Ribbons descending from seal -->
-      <path d="M -14 14 L -22 62 L -10 54 L 0 64 L 0 16 Z"
-            fill="url(#goldLight)"
+            stroke="url(#goldTrim)"
+            stroke-width="4.5"
+            stroke-linecap="round" />
+      <path d="M 0 -36
+               C 8 -36, 12 -28, 7 -20
+               C 2 -12, -10 -10, -10 2
+               C -10 12, 12 12, 12 24
+               C 12 36, -8 38, -14 30"
+            fill="none"
             stroke="#8F6216"
-            stroke-width="1.5" />
-      
-      <path d="M 14 14 L 22 62 L 10 54 L 0 64 L 0 16 Z"
-            fill="url(#goldLinear)"
-            stroke="#8F6216"
-            stroke-width="1.5" />
+            stroke-width="1.2"
+            stroke-dasharray="3 2" />
 
-      <!-- Scalloped rosette circle -->
-      <circle cx="0" cy="0" r="44" fill="url(#goldLinear)" filter="url(#goldGlow)" />
-      <circle cx="0" cy="0" r="39" fill="#131622" stroke="url(#goldTrim)" stroke-width="2" />
-      <circle cx="0" cy="0" r="33" fill="none" stroke="url(#goldLight)" stroke-width="1.5" stroke-dasharray="3 3" />
+      <!-- Anchor Ring (Top Shackle) -->
+      <circle cx="0" cy="-34" r="9" fill="none" stroke="url(#goldLinear)" stroke-width="4.5" />
+      <circle cx="0" cy="-34" r="5" fill="#101525" />
 
-      <!-- Center Emblem in Seal: Stylized Star -->
-      <path d="M 0 -20
-               L 5.8 -6.5
-               L 19.5 -5.8
-               L 9.5 4
-               L 12.5 17.5
-               L 0 10.5
-               L -12.5 17.5
-               L -9.5 4
-               L -19.5 -5.8
-               L -5.8 -6.5
-               Z"
-            fill="url(#goldLight)" />
-      <circle cx="0" cy="0" r="4" fill="#131622" />
+      <!-- Anchor Stock (Crossbar) -->
+      <path d="M -26 -22 L 26 -22" stroke="url(#goldLinear)" stroke-width="6.5" stroke-linecap="round" />
+      <circle cx="-26" cy="-22" r="4.5" fill="url(#goldLinear)" />
+      <circle cx="26" cy="-22" r="4.5" fill="url(#goldLinear)" />
+
+      <!-- Anchor Shank (Vertical shaft) -->
+      <path d="M 0 -24 L 0 28" stroke="url(#goldLinear)" stroke-width="7.5" stroke-linecap="round" />
+      <!-- Central Highlight line on shank -->
+      <path d="M 0 -22 L 0 26" stroke="#FFF7D6" stroke-width="1.8" stroke-linecap="round" />
+
+      <!-- Anchor Arms & Flukes (Crown & Curved Palms) -->
+      <path d="M -34 6
+               C -34 32, 34 32, 34 6"
+            fill="none"
+            stroke="url(#goldLinear)"
+            stroke-width="7"
+            stroke-linecap="round" />
+
+      <!-- Left Fluke (Triangular Palm) -->
+      <polygon points="-38,6 -24,4 -32,16" fill="url(#goldLinear)" stroke="#8F6216" stroke-width="1" />
+      <!-- Right Fluke (Triangular Palm) -->
+      <polygon points="38,6 24,4 32,16" fill="url(#goldLinear)" stroke="#8F6216" stroke-width="1" />
+
+      <!-- Crown Base Bead -->
+      <circle cx="0" cy="27" r="4" fill="url(#goldLinear)" />
     </g>
   </g>
 </svg>

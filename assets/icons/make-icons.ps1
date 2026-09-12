@@ -76,7 +76,7 @@ function Create-Ico {
     $fs.Close()
 }
 
-$inputImg = (Resolve-Path "assets\icons\concept-a-luxury-vault.jpg").Path
+$inputImg = (Resolve-Path "assets\icons\master-option-2.jpg").Path
 $src = [System.Drawing.Image]::FromFile($inputImg)
 Resize-Image $src 512 512 "assets\icons\icon-512.png"
 Resize-Image $src 256 256 "assets\icons\icon-256.png"
