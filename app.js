@@ -433,6 +433,17 @@
       }
     }
 
+    const brandLogo = document.getElementById("brandLogoImg");
+    if (brandLogo) {
+      if (lang === "en") {
+        brandLogo.src = "assets/icons/logo-en.svg";
+        brandLogo.alt = "My Docs";
+      } else {
+        brandLogo.src = "assets/icons/logo.svg";
+        brandLogo.alt = "Мої Докі";
+      }
+    }
+
     applyI18n();
     renderAll();
   }

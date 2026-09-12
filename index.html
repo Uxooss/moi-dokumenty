@@ -35,7 +35,7 @@
     <!-- ===================== PIN OVERLAY ===================== -->
     <div id="pinOverlay" class="pin-overlay hidden">
       <div class="pin-box">
-        <div class="pin-brand-mark" data-i18n="brandMark">МР</div>
+        <img src="assets/icons/brand-mark.svg" class="pin-brand-mark" alt="Мої Докі" />
         <h2 id="pinTitle" data-i18n="pinEnter">Введіть PIN-код</h2>
         <p id="pinSubtitle" class="pin-subtitle" data-i18n="pinAccess">
           для доступу до архіву
@@ -83,11 +83,14 @@
 
       <header class="topbar">
         <div class="brand">
-          <div class="brand-mark" data-i18n="brandMark">МД</div>
-          <div class="brand-text">
-            <h1 data-i18n="appTitle">Мої Докі</h1>
-            <p data-i18n="appSubtitle">сертифікати · ліцензії · посвідчення</p>
-          </div>
+          <img
+            id="brandLogoImg"
+            class="brand-logo-img"
+            src="assets/icons/logo.svg"
+            alt="Мої Докі"
+            height="40"
+          />
+          <h1 class="sr-only" data-i18n="appTitle">Мої Докі</h1>
         </div>
         <div class="search-wrap">
           <svg

@@ -218,20 +218,13 @@ a {
 }
 
 .pin-brand-mark {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   margin: 0 auto var(--space-lg);
-  border: 2px solid var(--accent);
   border-radius: 50%;
-  transform: rotate(-12deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Philosopher", system-ui, sans-serif;
-  font-weight: 700;
-  font-size: var(--text-lg);
-  color: var(--accent);
-  letter-spacing: 1px;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.45));
 }
 
 .pin-box h2 {
@@ -336,41 +329,35 @@ a {
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
   flex-shrink: 0;
   order: 1;
 }
 
-.brand-mark {
-  width: 36px;
-  height: 36px;
-  border: 2px solid var(--accent);
-  border-radius: 50%;
-  transform: rotate(-12deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Philosopher", system-ui, sans-serif;
-  font-weight: 700;
-  font-size: var(--text-sm);
-  color: var(--accent);
-  letter-spacing: 1px;
-  flex-shrink: 0;
+.brand-logo-img {
+  height: 40px;
+  width: auto;
+  max-width: 210px;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.25s ease;
+  user-select: none;
 }
 
-.brand-text h1 {
-  font-family: "Philosopher", system-ui, sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 4.0px;
-  text-transform: uppercase;
+.brand-logo-img:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 2px 8px rgba(229, 190, 100, 0.25));
 }
 
-.brand-text p {
-  font-size: var(--text-xs);
-  color: var(--muted);
-  line-height: 1.3;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Search */
@@ -2938,18 +2925,9 @@ select:focus-visible {
     min-width: 0;
   }
 
-  .brand-text h1 {
-    font-size: 13px;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .brand-mark {
-    width: 34px;
+  .brand-logo-img {
     height: 34px;
-    font-size: 13px;
+    max-width: 175px;
   }
 
   .icon-btn {
@@ -3008,15 +2986,9 @@ select:focus-visible {
     font-size: var(--text-md);
   }
 
-  .brand-text h1 {
-    font-size: 11px;
-    letter-spacing: 0;
-  }
-
-  .brand-mark {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
+  .brand-logo-img {
+    height: 30px;
+    max-width: 155px;
   }
 }
 
@@ -3038,15 +3010,9 @@ select:focus-visible {
 }
 
 @media (max-width: 320px) {
-  .brand-text h1 {
-    font-size: 10px;
-    letter-spacing: -0.5px;
-  }
-
-  .brand-mark {
-    width: 30px;
-    height: 30px;
-    font-size: 11px;
+  .brand-logo-img {
+    height: 26px;
+    max-width: 135px;
   }
 
   .icon-btn {
