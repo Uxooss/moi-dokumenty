@@ -1,4 +1,4 @@
-const CACHE_NAME = 'doc-vault-v53';
+const CACHE_NAME = 'doc-vault-v54';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,12 @@ const ASSETS = [
   './pdf.worker.min.js',
   './pdfthumb.js',
   './manifest.json',
+  './assets/icons/logo.svg',
+  './assets/icons/logo-en.svg',
+  './assets/icons/brand-mark.svg',
+  './assets/icons/favicon.svg',
+  './assets/icons/icon-192.png',
+  './assets/icons/icon-512.png',
 ];
 
 /* Install — cache all core assets */

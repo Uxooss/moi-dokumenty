@@ -2810,10 +2810,6 @@ select:focus-visible {
     padding: var(--space-sm) var(--space-md);
   }
 
-  .brand-text p {
-    display: none;
-  }
-
   .search-kbd {
     display: none;
   }
@@ -2919,10 +2915,6 @@ select:focus-visible {
     order: 1;
     min-width: 0;
     gap: 4px;
-  }
-
-  .brand-text {
-    min-width: 0;
   }
 
   .brand-logo-img {
