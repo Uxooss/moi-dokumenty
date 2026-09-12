@@ -30,6 +30,7 @@
       labelNumber: "Номер документа",
       labelTags: "Теги / категорія",
       tagsHint: "(Enter або кома, щоб додати)",
+      quickTagsPrompt: "Швидкі підказки:",
       labelIssueDate: "Дата видачі",
       labelExpiryDate: "Дійсний до",
       labelNoExpiry: "Безстроковий документ (без строку дії)",
@@ -225,6 +226,7 @@
       labelNumber: "Document number",
       labelTags: "Tags / category",
       tagsHint: "(Enter or comma to add)",
+      quickTagsPrompt: "Quick suggestions:",
       labelIssueDate: "Issue date",
       labelExpiryDate: "Valid until",
       labelNoExpiry: "Permanent document (no expiry)",
@@ -582,8 +584,62 @@
     selectedIds: new Set(),
     undoStack: [],
     lastPinUnlockSuccess: false,
+    savedTags: [],
   };
   let formTags = [];
+
+  const DEFAULT_TAGS_UK = [
+    "Паспорт",
+    "Посвідчення",
+    "Медицина",
+    "Договір",
+    "Авто",
+    "Фінанси",
+    "Освіта",
+    "Дія",
+  ];
+  const DEFAULT_TAGS_EN = [
+    "Passport",
+    "ID / License",
+    "Medical",
+    "Contract",
+    "Vehicle",
+    "Finance",
+    "Education",
+    "Diia",
+  ];
+
+  function getKnownTags() {
+    const lang = currentLang || "uk";
+    const defaults = lang === "en" ? DEFAULT_TAGS_EN : DEFAULT_TAGS_UK;
+    const tagSet = new Set(defaults);
+
+    (state.docs || []).forEach((d) => {
+      (d.tags || []).forEach((tg) => {
+        if (tg && tg.trim()) tagSet.add(tg.trim());
+      });
+    });
+
+    (state.savedTags || []).forEach((tg) => {
+      if (tg && tg.trim()) tagSet.add(tg.trim());
+    });
+
+    return [...tagSet].sort((a, b) => a.localeCompare(b, lang));
+  }
+
+  async function saveTagToKnown(tag) {
+    if (!tag || !tag.trim()) return;
+    const clean = tag.trim();
+    if (!state.savedTags) state.savedTags = [];
+    if (!state.savedTags.includes(clean)) {
+      state.savedTags.push(clean);
+      try {
+        await dbPut("settings", { key: "savedTags", value: state.savedTags });
+      } catch (e) {
+        console.warn("Failed to persist savedTags", e);
+      }
+    }
+  }
   const ALLOWED_TYPES = [
     "application/pdf",
     "image/jpeg",
@@ -649,6 +705,8 @@
     tagsInput,
     tagsChips,
     tagSuggestions,
+    tagsPromptsWrap,
+    tagsPromptsList,
     issueDateInput,
     expiryDateInput,
     noExpiryCheckbox,
@@ -758,6 +816,8 @@
     tagsInput = $("tagsInput");
     tagsChips = $("tagsChips");
     tagSuggestions = $("tagSuggestions");
+    tagsPromptsWrap = $("tagsPromptsWrap");
+    tagsPromptsList = $("tagsPromptsList");
     issueDateInput = $("issueDateInput");
     expiryDateInput = $("expiryDateInput");
     noExpiryCheckbox = $("noExpiryCheckbox");
@@ -1255,6 +1315,12 @@
     state.hasCustomViewMode = !!customViewMode;
     let defaultView = window.innerWidth <= 768 ? "list" : "tile";
     state.viewMode = customViewMode ? customViewMode.value : defaultView;
+
+    const savedTagsRow = rows.find((r) => r.key === "savedTags");
+    state.savedTags =
+      savedTagsRow && Array.isArray(savedTagsRow.value)
+        ? savedTagsRow.value
+        : [];
   }
 
   async function loadDocs() {
@@ -1532,20 +1598,32 @@
       </button>`,
     ).join("");
 
-    const allTags = new Set();
-    state.docs.forEach((d) => (d.tags || []).forEach((tg) => allTags.add(tg)));
-    const sorted = [...allTags].sort((a, b) => a.localeCompare(b, "uk"));
-    tagFiltersEl.innerHTML = sorted.length
-      ? sorted
+    const tagCounts = {};
+    active.forEach((d) => {
+      (d.tags || []).forEach((tg) => {
+        if (!tg) return;
+        const clean = tg.trim();
+        if (clean) tagCounts[clean] = (tagCounts[clean] || 0) + 1;
+      });
+    });
+
+    const sortedTags = Object.keys(tagCounts).sort((a, b) =>
+      a.localeCompare(b, currentLang || "uk"),
+    );
+
+    tagFiltersEl.innerHTML = sortedTags.length
+      ? sortedTags
           .map(
             (tg) =>
-              `<button class="tag-pill-btn${state.filters.tags.has(tg) ? " active" : ""}" data-tag="${esc(tg)}">${esc(tg)}</button>`,
+              `<button class="tag-pill-btn${state.filters.tags.has(tg) ? " active" : ""}" data-tag="${esc(tg)}">
+                <span>${esc(tg)}</span>
+                <span class="count">${tagCounts[tg]}</span>
+              </button>`,
           )
           .join("")
       : `<p class="muted-note">${t("noTagsYet")}</p>`;
-    tagSuggestions.innerHTML = sorted
-      .map((tg) => `<option value="${esc(tg)}">`)
-      .join("");
+
+    renderTagPrompts();
   }
 
   function renderCards() {
@@ -1634,13 +1712,31 @@
     if (state.dashboardVisible) renderDashboard();
   }
 
-  /* ===================== 13. Tag Chips (form) ===================== */
+  /* ===================== 13. Tag Chips & Prompts (form) ===================== */
   function renderFormTags() {
     tagsChips.innerHTML = formTags
       .map(
         (tg, i) =>
-          `<span class="chip">${esc(tg)}<button type="button" data-remove-tag="${i}">×</button></span>`,
+          `<span class="chip">${esc(tg)}<button type="button" data-remove-tag="${i}" aria-label="Видалити тег">×</button></span>`,
       )
+      .join("");
+    renderTagPrompts();
+  }
+
+  function renderTagPrompts() {
+    const known = getKnownTags();
+    if (tagSuggestions) {
+      tagSuggestions.innerHTML = known
+        .map((tg) => `<option value="${esc(tg)}">`)
+        .join("");
+    }
+
+    if (!tagsPromptsList) return;
+    tagsPromptsList.innerHTML = known
+      .map((tg) => {
+        const isSel = formTags.includes(tg);
+        return `<button type="button" class="tag-prompt-btn${isSel ? " selected" : ""}" data-prompt-tag="${esc(tg)}">${esc(tg)}</button>`;
+      })
       .join("");
   }
 
@@ -1652,20 +1748,50 @@
         renderFormTags();
       }
     });
-    tagsInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === ",") {
-        e.preventDefault();
-        const v = tagsInput.value.trim().replace(/,$/, "");
-        if (v && !formTags.includes(v)) {
+
+    const commitInputTag = () => {
+      const v = tagsInput.value.trim().replace(/,$/, "");
+      if (v) {
+        if (!formTags.includes(v)) {
           formTags.push(v);
-          renderFormTags();
+          saveTagToKnown(v);
         }
         tagsInput.value = "";
+        renderFormTags();
+      }
+    };
+
+    tagsInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === "," || e.key === "Tab") {
+        if (tagsInput.value.trim()) {
+          e.preventDefault();
+          commitInputTag();
+        }
       } else if (e.key === "Backspace" && !tagsInput.value && formTags.length) {
         formTags.pop();
         renderFormTags();
       }
     });
+
+    tagsInput.addEventListener("change", commitInputTag);
+    tagsInput.addEventListener("blur", commitInputTag);
+
+    if (tagsPromptsList) {
+      tagsPromptsList.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-prompt-tag]");
+        if (!btn) return;
+        const tg = btn.getAttribute("data-prompt-tag");
+        if (!tg) return;
+        const idx = formTags.indexOf(tg);
+        if (idx > -1) {
+          formTags.splice(idx, 1);
+        } else {
+          formTags.push(tg);
+          saveTagToKnown(tg);
+        }
+        renderFormTags();
+      });
+    }
   }
 
   /* ===================== 14. PDF Thumbnail Generation ===================== */
@@ -1911,6 +2037,14 @@
       }
       state.confirmDuplicate = false;
 
+      // Commit any pending tag in tagsInput if user typed and didn't hit Enter
+      const pendingTag = tagsInput.value.trim().replace(/,$/, "");
+      if (pendingTag && !formTags.includes(pendingTag)) {
+        formTags.push(pendingTag);
+        saveTagToKnown(pendingTag);
+      }
+      tagsInput.value = "";
+
       const docData = {
         nameUa,
         nameEn: nameEnInput.value.trim(),
@@ -1942,6 +2076,11 @@
         await dbPut("documents", docData);
         showToast("toastAdded", "success");
       }
+
+      for (const tg of formTags) {
+        await saveTagToKnown(tg);
+      }
+
       await loadDocs();
       closeModal(editModal);
       renderAll();

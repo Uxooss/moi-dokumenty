@@ -1097,30 +1097,55 @@ a {
   background: var(--none);
 }
 
-/* Tag pills */
+/* Tag pills in sidebar */
+#tagFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  white-space: normal;
+}
+
 .tag-pill-btn {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   padding: 3px 10px;
   border-radius: var(--radius-full);
   font-size: var(--text-xs);
   color: var(--ink-dim);
   background: var(--surface-2);
-  border: 1px solid transparent;
+  border: 1px solid var(--hairline);
   transition: all 0.15s ease;
-  margin: 0 4px 4px 0;
   cursor: pointer;
+  user-select: none;
 }
 
 .tag-pill-btn:hover {
-  border-color: var(--hairline);
+  border-color: var(--accent);
   color: var(--ink);
+  background: var(--surface-3);
 }
 
 .tag-pill-btn.active {
   background: var(--accent-soft);
   color: var(--accent);
   border-color: var(--accent);
+  font-weight: 500;
+}
+
+.tag-pill-btn .count {
+  font-size: 10px;
+  opacity: 0.75;
+  background: var(--surface-3);
+  padding: 1px 5px;
+  border-radius: var(--radius-full);
+}
+
+.tag-pill-btn.active .count {
+  background: var(--surface);
+  color: var(--accent);
+  opacity: 1;
 }
 
 #sortSelect {
@@ -1386,6 +1411,9 @@ a {
   text-transform: uppercase;
   letter-spacing: 0;
   border: 2.5px solid;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
 }
 
 .stamp-valid {
@@ -1410,6 +1438,27 @@ a {
   border-color: var(--none);
   color: var(--none);
   background: var(--none-bg);
+}
+
+/* Semi-opaque (30% transparency / 70% opacity) backgrounds for thumbnail stamps */
+.thumb-stamp.stamp-valid {
+  background: color-mix(in srgb, var(--ok) 25%, var(--surface) 75%);
+  background: color-mix(in srgb, color-mix(in srgb, var(--ok) 25%, var(--surface)) 70%, transparent 30%);
+}
+
+.thumb-stamp.stamp-soon {
+  background: color-mix(in srgb, var(--warn) 25%, var(--surface) 75%);
+  background: color-mix(in srgb, color-mix(in srgb, var(--warn) 25%, var(--surface)) 70%, transparent 30%);
+}
+
+.thumb-stamp.stamp-expired {
+  background: color-mix(in srgb, var(--danger) 25%, var(--surface) 75%);
+  background: color-mix(in srgb, color-mix(in srgb, var(--danger) 25%, var(--surface)) 70%, transparent 30%);
+}
+
+.thumb-stamp.stamp-none {
+  background: color-mix(in srgb, var(--none) 25%, var(--surface) 75%);
+  background: color-mix(in srgb, color-mix(in srgb, var(--none) 25%, var(--surface)) 70%, transparent 30%);
 }
 
 .archive-btn,
@@ -1948,6 +1997,65 @@ textarea {
 
 #tagsInput:focus {
   box-shadow: none;
+}
+
+/* Tags prompts in modal */
+.tags-prompts-wrap {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tags-prompts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tags-prompts-label {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.tags-prompts-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-prompt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  color: var(--ink-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.tag-prompt-btn:hover {
+  background: var(--surface-3);
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.tag-prompt-btn.selected {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 500;
+}
+
+.tag-prompt-btn.selected::before {
+  content: "✓ ";
+  font-size: 10px;
 }
 
 .pin-setup-input {

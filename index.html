@@ -436,11 +436,11 @@
             <div id="statusFilters"></div>
           </div>
           <div class="filter-group" id="tagsFilterGroup">
-            <h2 class="collapsible-header" id="tagsFilterHeader" tabindex="0" role="button" aria-expanded="false">
+            <h2 class="collapsible-header open" id="tagsFilterHeader" tabindex="0" role="button" aria-expanded="true">
               <span data-i18n="filterTags">ТЕГИ</span>
               <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </h2>
-            <div id="tagFilters"></div>
+            <div id="tagFilters" class="open"></div>
           </div>
           <div class="filter-group">
             <h2 data-i18n="filterSort">Сортування</h2>
@@ -674,9 +674,16 @@
                   list="tagSuggestions"
                   placeholder="додати тег…"
                   data-i18n-placeholder="phTag"
+                  autocomplete="off"
                 />
               </div>
               <datalist id="tagSuggestions"></datalist>
+              <div class="tags-prompts-wrap" id="tagsPromptsWrap">
+                <div class="tags-prompts-header">
+                  <span class="tags-prompts-label" data-i18n="quickTagsPrompt">Швидкі підказки:</span>
+                </div>
+                <div class="tags-prompts-list" id="tagsPromptsList"></div>
+              </div>
             </div>
             <div class="field-row">
               <div class="field">
