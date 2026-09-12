@@ -14,7 +14,8 @@
     "appId": "com.moidokumenty.app",
     "productName": "Мої Докі",
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,

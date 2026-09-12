@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 96" width="100%" height="100%">
+  <defs>
+    <radialGradient id="logoBgGlow" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#1E2333" />
+      <stop offset="60%" stop-color="#141722" />
+      <stop offset="100%" stop-color="#0B0D13" />
+    </radialGradient>
+    <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF2B2" />
+      <stop offset="35%" stop-color="#E5BE64" />
+      <stop offset="70%" stop-color="#C69436" />
+      <stop offset="100%" stop-color="#8F6216" />
+    </linearGradient>
+    <linearGradient id="logoGoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFEBB0" />
+      <stop offset="50%" stop-color="#D4A853" />
+      <stop offset="100%" stop-color="#9E6E1A" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Icon Mark (Squircle Badge) -->
+  <g transform="translate(10, 8)">
+    <rect x="0" y="0" width="80" height="80" rx="20" fill="url(#logoBgGlow)" stroke="url(#logoGold)" stroke-width="2.2" />
+    
+    <!-- Inner Document Silhouette -->
+    <path d="M 24 16 L 46 16 L 56 26 L 56 60 A 4 4 0 0 1 52 64 L 28 64 A 4 4 0 0 1 24 60 Z"
+          fill="#1C202F" stroke="url(#logoGold)" stroke-width="1.8" />
+    
+    <!-- Folded Corner -->
+    <path d="M 46 16 L 46 26 L 56 26 Z" fill="#2A3147" stroke="url(#logoGold)" stroke-width="1.4" />
+    
+    <!-- Document lines -->
+    <line x1="30" y1="28" x2="40" y2="28" stroke="#D4A853" stroke-width="1.8" stroke-linecap="round" />
+    <line x1="30" y1="35" x2="50" y2="35" stroke="#46506E" stroke-width="1.8" stroke-linecap="round" />
+    <line x1="30" y1="42" x2="46" y2="42" stroke="#46506E" stroke-width="1.8" stroke-linecap="round" />
+    
+    <!-- Mini Gold Seal -->
+    <circle cx="50" cy="54" r="10" fill="url(#logoGold)" />
+    <circle cx="50" cy="54" r="8" fill="#141722" />
+    <polygon points="50,48.5 51.5,52.5 55.5,53 52.5,55.5 53.5,59.5 50,57.5 46.5,59.5 47.5,55.5 44.5,53 48.5,52.5" fill="url(#logoGold)" />
+  </g>
+
+  <!-- Right Typography Block -->
+  <g transform="translate(108, 0)">
+    <!-- Main Title -->
+    <text x="0" y="47" font-family="'Philosopher', 'Cinzel', 'Trajan Pro', Georgia, serif" font-size="30" font-weight="700" letter-spacing="4" fill="url(#logoGoldLight)">
+      МОЇ ДОКІ
+    </text>
+    
+    <!-- Subtitle / Tagline -->
+    <text x="2" y="69" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="500" letter-spacing="2.5" fill="#8E95AA" text-transform="uppercase">
+      СЕРТИФІКАТИ · ЛІЦЕНЗІЇ · АРХІВ
+    </text>
+  </g>
+</svg>
