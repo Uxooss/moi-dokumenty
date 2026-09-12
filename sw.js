@@ -30,6 +30,7 @@ self.addEventListener('activate', event => {
 
 /* Fetch — cache-first for local assets, network-first for external (fonts) */
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
   /* Google Fonts — stale-while-revalidate */

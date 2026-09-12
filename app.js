@@ -923,7 +923,10 @@
 
   function closeModal(m) {
     m.classList.add("hidden");
-    document.body.style.overflow = "";
+    const openModals = document.querySelectorAll(".modal-overlay:not(.hidden)");
+    if (!openModals.length) {
+      document.body.style.overflow = "";
+    }
     if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
       lastFocusedElement.focus();
     }
@@ -2174,10 +2177,11 @@
         (d) => String(d.id) === c.getAttribute("data-open"),
       );
       if (doc) {
+        if (!alertListModal.classList.contains("hidden")) {
+          closeModal(alertListModal);
+        }
         if (doc.files && doc.files.length) openPreview(doc);
         else openEditModal(doc);
-        // Also close the alert list modal if it's open, to switch cleanly to the preview/edit mode
-        closeModal(alertListModal);
       }
     });
 
@@ -2197,9 +2201,11 @@
         return;
       }
       
+      if (!alertListModal.classList.contains("hidden")) {
+        closeModal(alertListModal);
+      }
       if (doc.files && doc.files.length) openPreview(doc);
       else openEditModal(doc);
-      closeModal(alertListModal);
     });
 
     statusFiltersEl.addEventListener("click", (e) => {
@@ -2221,9 +2227,17 @@
 
     const tagsFilterHeader = $("tagsFilterHeader");
     if (tagsFilterHeader) {
-      tagsFilterHeader.addEventListener("click", () => {
-        tagsFilterHeader.classList.toggle("open");
+      const toggleTagsFilter = () => {
+        const isOpen = tagsFilterHeader.classList.toggle("open");
         tagFiltersEl.classList.toggle("open");
+        tagsFilterHeader.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      };
+      tagsFilterHeader.addEventListener("click", toggleTagsFilter);
+      tagsFilterHeader.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleTagsFilter();
+        }
       });
     }
 
@@ -2664,8 +2678,16 @@
       /* Encryption toggle */
       if (encryptionToggle) {
         const enc = encryptionToggle.checked;
-        await dbPut("settings", { key: "encryptionEnabled", value: enc });
-        state.settings.encryptionEnabled = enc;
+        const hash = await getPINHash();
+        if (enc && !hash) {
+          showToast(currentLang === "en" ? "Set a PIN first to enable encryption" : "Спочатку встановіть PIN-код для увімкнення шифрування", "warn");
+          encryptionToggle.checked = false;
+          await dbPut("settings", { key: "encryptionEnabled", value: false });
+          state.settings.encryptionEnabled = false;
+        } else {
+          await dbPut("settings", { key: "encryptionEnabled", value: enc });
+          state.settings.encryptionEnabled = enc;
+        }
       }
 
       /* Theme select */
